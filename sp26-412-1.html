@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Math 412</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  
+  <script>
+MathJax = {
+  tex: {
+    inlineMath: {'[+]': [['$', '$']]}
+  }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+
+  
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Math 412</h1>
+<p class="date">Intro to PDEs and Ch 1: Heat Equation</p>
+</header>
+<section id="quick-de-and-ode-review" class="frame">
+<h3>Quick DE and ODE Review</h3>
+<p>A <em>differential equation</em> is an equation involving an unknown
+function and its derivative(s).<br />
+For <em>ordinary differential equations</em>, this unknown dependent
+variable is a function of a <em>single</em> independent variable. Most
+often, we think of this input as time <span
+class="math inline"><em>t</em></span>, so that the ordinary differential
+equation describes a <em>dynamical system</em>.</p>
+</section>
+<section id="example-of-odes-you-saw-in-math-2501" class="frame">
+<h3>Example of ODEs you saw in Math 250/1</h3>
+<ul>
+<li><p>Simple exponential growth/decay: <span
+class="math display"><em>x</em>′ = <em>a</em><em>x</em></span></p></li>
+<li><p>Separable first order: <span class="math display">$$\frac{dx}{dt}
+= f(t)g(y)$$</span></p></li>
+<li><p>First order linear: <span class="math display">$$\frac{dx}{dt} +
+P(t)x = Q(t)$$</span></p></li>
+<li><p>Driven mass-spring-dashpot <span
+class="math display"><em>m</em><em>x</em>″ + <em>c</em><em>x</em>′ + <em>k</em><em>x</em> = <em>F</em>(<em>t</em>)</span></p></li>
+<li><p>Constant coefficient homogeneous <span
+class="math inline"><em>n</em> × <em>n</em></span> first order system:
+<span
+class="math display"><strong>x</strong>′ = <strong>A</strong><strong>x</strong></span></p></li>
+</ul>
+</section>
+<section id="what-is-a-pde" class="frame">
+<h3>What is a PDE?</h3>
+<p>A <em>partial differential equation</em> is an equation involving an
+unknown function and its <em>partial derivatives</em> — so we are
+looking for a function <em>of several variables</em> when solving a
+PDE.<br />
+We’ll have cases where the dependence is on space and time, or on
+multiple spatial variables, or both, or ...<br />
+We’ll briefly mention certain examples and how our solution techniques
+can be extended to 3 or more independent variables, but for most of Math
+412 we’ll focus on the case of two independent variables.</p>
+</section>
+<section id="examples-of-pdes-well-see-in-412" class="frame">
+<h3>Examples of PDEs we’ll see in 412</h3>
+<ul>
+<li><p>Simple transport: <span
+class="math display"><em>u</em><sub><em>t</em></sub> + <em>c</em><em>u</em><sub><em>x</em></sub> = 0</span></p></li>
+<li><p>Wave equation: <span
+class="math display"><em>u</em><sub><em>t</em><em>t</em></sub> = <em>c</em><sup>2</sup><em>u</em><sub><em>x</em><em>x</em></sub></span></p></li>
+<li><p>Heat/diffusion equation: <span
+class="math display"><em>u</em><sub><em>t</em></sub> = <em>k</em><em>u</em><sub><em>x</em><em>x</em></sub></span></p></li>
+<li><p>Laplace’s equation: <span
+class="math display"><em>u</em><sub><em>x</em><em>x</em></sub> + <em>u</em><sub><em>y</em><em>y</em></sub> = 0</span>
+— describes steady-state/equilibrium solutions of 2d heat
+equation</p></li>
+<li><p>Burgers’ equation: <span
+class="math display"><em>u</em><sub><em>t</em></sub> + <em>u</em><em>u</em><sub><em>x</em></sub> = 0</span>
+— a “toy model" for gas dynamics, simplest example of a “nonlinear wave
+equation"</p></li>
+</ul>
+</section>
+<div class="frame">
+<p>Similar to how we spent time in Math 250/1 studying constant
+coefficient homogeneous ODE, the first four examples on the previous
+slide are prototypical examples of constant coefficient homogeneous
+PDE.</p>
+</div>
+<section id="rough-outline-for-the-course" class="frame">
+<h3>Rough outline for the course</h3>
+<p>We’ll cover parts of chapters 1-4, 10, 12 from Haberman.<br />
+We’ll first consider the heat equation first since it naturally leads to
+Fourier series (the simple transport equation is quickly solved using
+the “method of characteristics", which we’ll focus on in Ch 12).<br />
+We’ll use Fourier series to solve the heat equation, Laplace’s equation,
+and the wave equation on bounded domains (Ch 1-4), and then introduce
+the Fourier transform to solve these PDE on certain unbounded domains
+(Ch 10).<br />
+</p>
+</section>
+<div class="frame">
+<p>Then we’ll talk about the simple (constant speed) transport equation
+<span
+class="math display"><em>u</em><sub><em>t</em></sub> + <em>c</em><em>u</em><sub><em>x</em></sub> = 0</span>
+and the idea of “finite speed of propagation", and apply these ideas to
+the wave equation (Ch 12.1-12.3).<br />
+We’ll finally consider the (nonlinear) Burgers’ equation <span
+class="math display"><em>u</em><sub><em>t</em></sub> + <em>u</em><em>u</em><sub><em>x</em></sub> = 0</span>
+(whose solutions develop jump discontinuities/<em>shock waves</em>), and
+see how a variation of this equation can describe traffic flow on a
+one-lane road (Ch 12.6).</p>
+</div>
+<section id="ch-1.1" class="frame">
+<h3>Ch 1.1</h3>
+<p>We’ll use this 3 step philosophy of applied mathematics:</p>
+<ol>
+<li><p>Formulation</p></li>
+<li><p>Solution</p></li>
+<li><p>Interpretation</p></li>
+</ol>
+</section>
+<section id="deriving-the-heat-equation" class="frame">
+<h3>Deriving the heat equation</h3>
+<p>Goal: write equations governing the transfer of thermal energy —
+start with a simple example of <em>conduction</em> in one-dimensional
+solid rod.<br />
+<em>Conduction</em> — transfer of heat due to collisions of neighboring
+molecules — kinetic energy of vibration of one molecule is transferred
+to its nearest neighbor; occurs even if molecules themselves aren’t
+moving much.<br />
+<em>Convection</em> — moving molecules carry thermal energy from one
+place to another<br />
+We focus on the case of solids, where conduction is the only means of
+heat transfer. However, conduction is still the primary method of heat
+transfer in liquids/gases if the fluid velocity is sufficiently
+small.</p>
+</section>
+<section id="defining-physical-quantities" class="frame">
+<h3>Defining physical quantities</h3>
+<p>Consider a rod with constant cross-sectional area <span
+class="math inline"><em>A</em></span> (perpendicular to the <span
+class="math inline"><em>x</em></span>-direction) occupying <span
+class="math inline">0 ≤ <em>x</em> ≤ <em>L</em></span>.<br />
+Assume all thermal quantities are constant across a section, so that
+<span class="math display">$$\begin{aligned}
+e(x,t) &amp;:= \mbox{thermal energy density per unit volume},\\ \\
+\phi(x,t) &amp;:= \mbox{heat flux: thermal energy \emph{per unit time}}
+  \\ &amp; \mbox{ flowing to the right \emph{per unit surface area}}\\
+\\
+  Q(x,t) &amp;:= \mbox{sources: thermal energy per unit volume
+generated}\\ &amp;\mbox{ per unit time, eg chemical reactions,
+electrical heating}
+  
+\end{aligned}$$</span></p>
+</section>
+<section id="conservation-of-heat-energy" class="frame">
+<h3>Conservation of heat energy</h3>
+<p>Consider an arbitrary part of the rod occupying <span
+class="math inline"><em>a</em> ≤ <em>x</em> ≤ <em>b</em>.</span> The
+change in the total heat energy contained in this portion must be due to
+either heat flowing across boundaries or being generated inside: <span
+class="math display">$$\begin{aligned}
+\dfrac{d}{dt} \int_a^b A e(x, t) \, dx &amp;= A \phi(a, t) - A \phi(b,
+t) + \int_a^b A Q(x,t) \, dx, \\ \\ \\ \\
+  \dfrac{d}{dt} \int_a^b  e(x, t) \, dx &amp;=  \phi(a, t) -  \phi(b, t)
++ \int_a^b  Q(x,t) \, dx
+\end{aligned}$$</span></p>
+</section>
+<section id="some-calculus..." class="frame">
+<h3>Some calculus...</h3>
+<p><span class="math inline"><em>e</em>(<em>x</em>, <em>t</em>)</span>
+differentiable and <span
+class="math inline"><em>a</em>, <em>b</em></span> constant means <span
+class="math display">$$\dfrac{d}{dt} \int_a^b e(x,t) \, dx = \int_a^b
+\frac{\partial e}{\partial t} \, dx,$$</span> and Fundamental Theorem of
+Calculus yields <span class="math display">$$\phi(a,t) - \phi(b,t) =
+-\int_a^b \dfrac{\partial \phi}{\partial x} \, dx.$$</span> Therefore,
+we can rearrange to what we can call the <em>integral conservation
+law</em> <span class="math display">$$\int_a^b \left( \frac{\partial
+e}{\partial t} + \frac{\partial \phi}{\partial x} - Q \right) dx =
+0.$$</span></p>
+</section>
+<div class="frame">
+<p><em>Key idea:</em> Assuming everything is continuous, the only way
+this integral could be zero for arbitrary <span
+class="math inline"><em>a</em></span> and <span
+class="math inline"><em>b</em></span> is if the integrand itself is
+identically zero.<br />
+Therefore, we can get the <em>differential equation</em> <span
+class="math display">$$\frac{\partial e}{\partial t} = - \frac{\partial
+\phi}{\partial x} + Q.$$</span></p>
+</div>
+<section id="temperature-specific-heat" class="frame">
+<h3>Temperature, specific heat</h3>
+<p>We define <span class="math display">$$\begin{aligned}
+u(x,t) &amp;= \mbox{temperature},\\
+c(x) &amp;= \mbox{specific heat --- heat energy needed }\\ &amp;
+\mbox{per unit mass to raise temperature one unit},\\
+\rho(x) &amp;=  \mbox{mass density --- mass per unit volume}
+\end{aligned}$$</span> so that <span
+class="math display"><em>e</em>(<em>x</em>, <em>t</em>) = <em>c</em>(<em>x</em>)<em>ρ</em>(<em>x</em>)<em>u</em>(<em>x</em>, <em>t</em>),</span>
+leading to <span class="math display">$$c(x) \rho(x) \frac{\partial
+u}{\partial t} = - \frac{\partial \phi}{\partial x} + Q.$$</span></p>
+</section>
+<section id="more-physics-fouriers-law" class="frame">
+<h3>More physics — Fourier’s law</h3>
+<p>Up to now, essentially just definitions and calculus — the only
+physics so far was conservation of heat energy.<br />
+To proceed further, we’ll need to use another “law of nature" — the rule
+for relating the flux to the temperature distribution.</p>
+<ul>
+<li><p>If the temperature is constant in a region, no heat energy
+flows.</p></li>
+<li><p>If there are temperature differences, the heat energy flows from
+the hotter region to the colder region.</p></li>
+<li><p>The greater the temperature differences (for the same material),
+the greater the flow of heat energy.</p></li>
+<li><p>The flow of heat energy will vary for different materials, even
+with the same temperature differences.</p></li>
+</ul>
+</section>
+<section id="more-physics-fouriers-law-1" class="frame">
+<h3>More physics — Fourier’s law</h3>
+<p><em>Fourier’s Law of Heat Conduction:</em> (1768-1830): <span
+class="math display">$$\phi = - K_0 \dfrac{\partial u}{\partial
+x},$$</span> where <span
+class="math inline"><em>K</em><sub>0</sub></span> is the <em>thermal
+conductivity</em> — constant of proportionality measuring the ability of
+the material to conduct heat.<br />
+Actually, thermal conductivity does slightly depend on temperature
+(technically so does specific heat), but we’ll assume it only depends on
+the material so that <span
+class="math display"><em>K</em><sub>0</sub> = <em>K</em><sub>0</sub>(<em>x</em>)</span>
+or <span class="math display"><em>K</em><sub>0</sub> = const</span> for
+a uniform rod.</p>
+</section>
+<div class="frame">
+<p>Putting it all together, <span class="math display">$$c(x) \rho(x)
+\frac{\partial u}{\partial t} = \frac{\partial}{\partial x} \left(
+K_0(x) \frac{\partial u}{\partial x} \right) + Q(x,t).$$</span> Assuming
+a uniform rod (so that specific heat, mass density, thermal conductivity
+are constants) and zero source leads to <span
+class="math display">$$\frac{\partial u}{\partial t} = k \frac{\partial
+^2 u}{\partial x^2},$$</span> where <span class="math inline">$k =
+\frac{K_0}{c \rho}$</span> is the <em>thermal diffusivity</em>. The
+above equation is what we refer to as “the heat equation" or “the
+diffusion equation".</p>
+</div>
+<section id="initial-conditions" class="frame">
+<h3>Initial Conditions</h3>
+<p>Recall that the DE <span
+class="math inline">$\frac{dx}{dt}=ax$</span> has <em>infinitely many
+solutions</em> — <span
+class="math inline"><em>x</em> = <em>C</em><em>e</em><sup><em>a</em><em>t</em></sup></span>
+for any constant <span class="math inline"><em>C</em></span>.<br />
+Only when we consider an <em>initial value problem</em> <span
+class="math display">$$\left\{ \begin{array}{rl} \frac{dx}{dt} &amp;= ax
+\\ \\ x(0) &amp;= x_0 \end{array} \right.$$</span> do we obtain a
+<em>unique solution</em> <span
+class="math inline"><em>x</em> = <em>x</em><sub>0</sub><em>e</em><sup><em>a</em><em>t</em></sup></span>.<br />
+The modeling and mathematics are deeply connected — for modeling we are
+interested in figuring out what information is needed to predict the
+future; being able to trust the prediction requires that only one
+prediction is made — so <em>uniqueness</em> is a very important
+consideration.</p>
+</section>
+<div class="frame">
+<p>Since we expect infinitely many solutions to the heat equation <span
+class="math display">$$\frac{\partial u}{\partial t} = k
+\frac{\partial^2 u}{\partial x^2},$$</span> if we want to use this
+equation to make reliable modeling predictions, we’ll need to determine
+what other conditions (in addition to the PDE) will allow us to uniquely
+predict the future.<br />
+It turns out we’ll need both <em>initial and boundary
+conditions</em>.</p>
+</div>
+<div class="frame">
+<p>Recall we’re considering the time AND spatial dependence of
+temperature given by <span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>)</span>, where the
+one-dimensional rod occupies <span
+class="math inline">0 ≤ <em>x</em> ≤ <em>L</em>.</span><br />
+The <em>initial condition</em> in this case is the entire <em>initial
+temperature distribution</em> <span
+class="math display"><em>u</em>(<em>x</em>, 0) = <em>f</em>(<em>x</em>).</span>
+It makes intuitive sense that the only way we’d be able to predict the
+temperature of all points of the rod in the future is if we know the
+temperature of all points at a given time (which we always pick <span
+class="math inline"><em>t</em> = 0</span> for convenience).</p>
+</div>
+<div class="frame">
+<p>Unfortunately, there are infinitely many possible solutions <span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>)</span> satisfying
+<span class="math display">$$\left\{ \begin{array}{rl}  \frac{\partial
+u}{\partial t} &amp;= k \frac{\partial^2 u}{\partial x^2}  \\ \\ u(x,0)
+&amp;= f(x) \end{array} \right. .$$</span> In order to have a problem
+that is useful for modeling predictions, we’ll need to prescribe
+<em>boundary conditions</em> — one for the <span
+class="math inline"><em>x</em> = 0</span> boundary, and one for the
+<span class="math inline"><em>x</em> = <em>L</em></span> boundary.</p>
+</div>
+<div class="frame">
+<p>We need to describe what happens on each end. For <span
+class="math inline"><em>x</em> = 0</span>, we could have</p>
+<ul>
+<li><p><span
+class="math inline"><em>u</em>(0, <em>t</em>) = <em>u</em><sub><em>B</em></sub>(<em>t</em>)</span>
+— prescribed temperature, “known" fluid bath temperature <span
+class="math inline"><em>u</em><sub><em>B</em></sub>(<em>t</em>)</span>.</p></li>
+<li><p><span class="math inline">$-K_0(0) \frac{\partial u}{\partial
+x}(0,t) = \phi(t)$</span> — prescribed heat flux; <span
+class="math inline"><em>ϕ</em>(<em>t</em>) ≡ 0</span> is “perfectly
+insulated"</p></li>
+<li><p>could also set up Newton’s law of cooling for cases where
+convection in fluid bath is important</p></li>
+</ul>
+</div>
+<div class="frame">
+<p>We’ll see that the following <em>initial-boundary value problem</em>
+<span class="math display">$$\left\{ \begin{array}{rl}  \frac{\partial
+u}{\partial t} &amp;= k \frac{\partial^2 u}{\partial x^2} \\ u(x,0)
+&amp;= f(x)  \\ u(0,t) &amp;= T_1(t) \\ u(L,t) &amp;= T_2(t) \end{array}
+\right.$$</span> does have unique solutions! That is, knowing the
+temperature of the entire rod at <span
+class="math inline"><em>t</em> = 0</span>, and the temperature of each
+of the two ends for <span class="math inline"><em>t</em> &gt; 0</span>,
+then we are able to find the unique temperature distribution <span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>)</span> for <span
+class="math inline">0 ≤ <em>x</em> ≤ <em>L</em>, <em>t</em> &gt; 0</span>.<br />
+Goal: Solve for the temperature <span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>)</span> on the rod
+for all <span class="math inline"><em>t</em> &gt; 0</span>.</p>
+</div>
+<div class="frame">
+<p>We’ll move ahead to 2.1 for now to solve the 1d heat equation; if
+you’re curious about the 2d or 3d derivation now you can take a look at
+1.5 in the textbook.<br />
+It follows all the same steps, but it becomes necessary to think about
+flux as a vector quantity. The key FTC step “becomes" “2-d divergence
+theorem"/“Green’s theorem for flux" or the divergence theorem.</p>
+</div>
+<section id="ch-2-method-of-separation-of-variables" class="frame">
+<h3>Ch 2: Method of Separation of Variables</h3>
+<p>Unfortunate nomenclature clash between “ODE 101" and “PDE 101":
+separable ODEs vs. separation of variables for PDEs<br />
+Separable ODEs:</p>
+<ul>
+<li><p>property of the <strong>equation</strong> — of the form <span
+class="math inline">$\frac{dy}{dt} = f(y)g(t)$</span></p></li>
+<li><p>quick and easy to see via chain rule / integration by
+substitution that following the prescribed technique leads to solutions;
+existence and uniqueness for ODEs shows “we’re done"</p></li>
+</ul>
+</section>
+<section id="ch-2-method-of-separation-of-variables-1" class="frame">
+<h3>Ch 2: Method of Separation of Variables</h3>
+<p>Separation of variables for PDEs:</p>
+<ul>
+<li><p>suitable for IVBPs when the PDE and BC are <em>linear</em> and
+<em>homogeneous</em></p></li>
+<li><p>corresponds to an <strong><em>ansatz</em></strong>/educated guess
+<span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>) = <em>ϕ</em>(<em>x</em>)<em>G</em>(<em>t</em>)</span>
+regarding the form of the solution — completely unclear why this form is
+chosen, first done by Daniel Bernoulli in 1700s. We’ll continue to go
+with what’s been working...</p></li>
+<li><p>Specialized PDE theories can establish existence and uniqueness —
+heat, wave, Laplace’s equation are all completely different!</p></li>
+</ul>
+</section>
+<section id="linear-operators" class="frame">
+<h3>Linear operators</h3>
+<p>A <em>linear operator</em> <span
+class="math inline"><em>L</em></span> satisfies the <em>linearity
+property</em>: <span
+class="math display"><em>L</em>(<em>c</em><sub>1</sub><em>u</em><sub>1</sub> + <em>c</em><sub>2</sub><em>u</em><sub>2</sub>) = <em>c</em><sub>1</sub><em>L</em>(<em>u</em><sub>1</sub>) + <em>c</em><sub>2</sub><em>L</em>(<em>u</em><sub>2</sub>)    
+for all
+<em>u</em><sub>1</sub>, <em>u</em><sub>2</sub>, <em>c</em><sub>1</sub>, <em>c</em><sub>2</sub>.</span>
+We have the <em>heat operator</em> <span class="math display">$$L(u) :=
+\frac{\partial u}{\partial t} - k \frac{\partial^2 u}{\partial
+x^2}.$$</span></p>
+</section>
+<section id="verifying-the-heat-operator-is-linear" class="frame">
+<h3>Verifying the heat operator is linear</h3>
+<p><span class="math display">$$\begin{aligned}
+L(c_1 u_1 + c_2 u_2) &amp;= \frac{\partial}{\partial t} (c_1 u_1 + c_2
+u_2) - k \frac{\partial^2}{\partial x^2} (c_1 u_1 + c_2 u_2) \\
+&amp;= c_1 \frac{\partial u_1}{\partial t} + c_2 \frac{\partial
+u_2}{\partial t} - k c_1 \frac{\partial^2 u_1}{\partial x^2} - k c_2
+\frac{\partial^2 u}{\partial x^2} \\
+&amp;= c_1 \left( \frac{\partial u_1}{\partial t} - k \frac{\partial^2
+u_1}{\partial x^2} \right) + c_2 \left( \frac{\partial u_2}{\partial t}
+- k \frac{\partial^2 u_2}{\partial x^2} \right) \\
+&amp;= c_1 L(u_1) + c_2 L(u_2).
+\end{aligned}$$</span></p>
+</section>
+<section id="linear-equations" class="frame">
+<h3>Linear equations</h3>
+<p>A <em>linear equation</em> for the unknown function <span
+class="math inline"><em>u</em></span> is of the form <span
+class="math display"><em>L</em>(<em>u</em>) = <em>f</em>,</span> where
+<span class="math inline"><em>L</em></span> is a linear operator and
+<span class="math inline"><em>f</em></span> is known. The heat equation
+takes the form <span class="math display">$$L(u) = \frac{\partial
+u}{\partial t} - k \frac{\partial^2 u}{\partial x^2} = f(x,t),$$</span>
+where <span class="math inline">$f(x,t) = \frac{Q(x,t)}{c \rho}$</span>
+is the source.<br />
+If <span class="math inline"><em>f</em> = 0,</span> the equation <span
+class="math inline"><em>L</em>(<em>u</em>) = 0</span> is a <em>linear
+homogeneous</em> equation.</p>
+</section>
+<div class="frame">
+<p>Since <span class="math inline"><em>L</em>(0) = 0</span> for all
+linear operators, <em>the trivial solution</em> <span
+class="math display"><em>u</em> ≡ 0</span> solves <em>every</em> linear
+homogeneous equation.<br />
+If <span class="math inline"><em>f</em> ≠ 0</span> then the equation is
+<em>nonhomogeneous</em>.<br />
+The symbol “<span class="math inline">≡</span>" is read as “identically
+equals" — it emphasizes that <span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>) = 0</span> for
+all <span class="math inline"><em>x</em>, <em>t</em></span> under
+consideration, instead of just equalling zero for certain <span
+class="math inline"><em>x</em>, <em>t</em></span>. You can also read
+<span class="math inline"><em>u</em> ≡ 0</span> as <span
+class="math inline"><em>u</em></span> <em>is defined to be the
+(constant) zero function</em> of <span
+class="math inline"><em>x</em></span> and <span
+class="math inline"><em>t</em></span>.</p>
+</div>
+<section id="principle-of-superposition" class="frame">
+<h3>Principle of Superposition</h3>
+<p>If <span class="math inline"><em>u</em><sub>1</sub></span> and <span
+class="math inline"><em>u</em><sub>2</sub></span> satisfy a linear
+homogeneous equation, then an arbitrary linear combination of them <span
+class="math inline"><em>c</em><sub>1</sub><em>u</em><sub>1</sub> + <em>c</em><sub>2</sub><em>u</em><sub>2</sub></span>
+also satisfies the equation.<br />
+In other words, the solution space of a linear homogeneous equation
+forms a vector space.<br />
+</p>
+</section>
+<div class="frame">
+<p>In Math 220 and 250, your linear maps / linear ordinary differential
+equations had <em>finite dimensional vector spaces</em> as their
+solution spaces — linear algebra/matrix techniques (finite dimensional
+Hilbert spaces) are relevant.<br />
+In this class, our PDE will have <em>infinite dimensional vector
+spaces</em> as their solution spaces. This is the purview of Fourier
+series (function spaces, functional analysis, infinite dimensional
+Hilbert spaces, ...)</p>
+</div>
+<section id="homogeneous-boundary-conditions" class="frame">
+<h3>Homogeneous boundary conditions</h3>
+<p>The cases of<br />
+<em>prescribed temperature</em>: <span
+class="math inline"><em>u</em>(⋅, <em>t</em>) = <em>f</em>(<em>t</em>)</span>,<br />
+<em>prescribed heat flux</em>: <span class="math inline">$\frac{\partial
+u}{\partial x}(\cdot, t) = f(t)$</span>,<br />
+or <em>Newtown’s law of cooling</em> (prescribed temp bath with
+convection): <span class="math inline">$-K_0 \frac{\partial u}{\partial
+x}(\cdot, t) = h[u(\cdot, t)-f(t)]$</span><br />
+will not be homogeneous in general.<br />
+Two cases that are homogeneous: <strong>zero temperature ends</strong>
+and <strong>insulated ends</strong>.</p>
+</section>
+<section id="no-sources-zero-temperature-ends" class="frame">
+<h3>No sources, zero temperature ends</h3>
+<p>We consider <span class="math display">$$\left\{ \begin{array}{crl}
+\mbox{PDE: } &amp; \frac{\partial u}{\partial t} = k \frac{\partial^2
+u}{\partial x^2}, &amp; 0 &lt; x &lt; L, t &gt; 0 \\ \mbox{BC: } &amp;
+u(0,t) = u(L,t) = 0, &amp; t &gt; 0 \\ \mbox{IC: } &amp; u(x,0) = f(x),
+&amp; 0 \leq x \leq L \end{array} \right. .$$</span></p>
+</section>
+<section id="separation-of-variables-ansatz" class="frame">
+<h3>Separation of variables ansatz</h3>
+<p>We seek a <em>product solution</em> to the PDE and BC of the form
+<span
+class="math display"><em>u</em>(<em>x</em>, <em>t</em>) = <em>ϕ</em>(<em>x</em>)<em>G</em>(<em>t</em>).</span>
+We ignore the IC for now — later the <em>principle of superposition and
+properties of Fourier series</em> will allow us to use an appropriate
+<em>infinite</em> sum of such product solutions to obtain a solution
+that also satisfies the IC.<br />
+Math 250 analogue: Used <em>Euler’s ansatz</em> <span
+class="math inline"><em>y</em>(<em>t</em>) = <em>e</em><sup><em>r</em><em>t</em></sup></span>
+for higher order constant coefficient equations, and
+<em>eigenvalue/vector ansatz</em> <span
+class="math inline"><strong>x</strong>(<em>t</em>) = <em>e</em><sup><em>λ</em><em>t</em></sup><strong>v</strong></span>
+for first order constant coefficient systems. At that step, you were
+ignoring IC. <em>Linearity</em> and <em>properties of linear
+independence/Wronskians/eigenbases</em> allowed you to use an
+appropriate <em>finite</em> sum to obtain a solution that also satisfied
+the IC.</p>
+</section>
+<section id="separation-of-variables-key-steps" class="frame">
+<h3>Separation of variables key steps</h3>
+<p>Our ansatz yields <span class="math display">$$\begin{aligned}
+\frac{\partial u}{\partial t} &amp;= \phi(x) G'(t), \\
+\frac{\partial^2 u}{\partial x^2} &amp;= \phi''(x) G(t).
+\end{aligned}$$</span> Substitute into the heat equation to yield <span
+class="math display">$$\phi (x) G'(t) = k \phi''(x) G(t) \implies
+\frac{1}{kG(t)} G'(t) = \frac{1}{\phi(x)} \phi''(x).$$</span> Since
+<span class="math inline"><em>x</em></span> and <span
+class="math inline"><em>t</em></span> are independent variables, the
+only way the above quantities can be equal for arbitrary <span
+class="math inline"><em>x</em></span> and <span
+class="math inline"><em>t</em></span> is if they’re both constant! We
+then introduce <span class="math display">$$\frac{1}{kG(t)} G'(t) =
+\frac{1}{\phi(x)} \phi''(x) = -\lambda,$$</span> where <span
+class="math inline"><em>λ</em></span> is the <em>separation
+constant</em>.</p>
+</section>
+<section id="separation-of-variables-key-steps-1" class="frame">
+<h3>Separation of variables key steps</h3>
+<p>The upshot of the separation of variables ansatz is that the constant
+coefficient homogeneous PDE is reduced to <em>two coupled constant
+coefficient homogeneous ODEs</em> <span
+class="math display">$$\begin{aligned}
+\phi''(x) &amp;= - \lambda \phi(x), \\
+G'(t) &amp;= - \lambda k G(t).
+\end{aligned}$$</span> The BC become <span
+class="math display"><em>ϕ</em>(0)<em>G</em>(<em>t</em>) = <em>ϕ</em>(<em>L</em>)<em>G</em>(<em>t</em>) = 0
+for all <em>t</em> &gt; 0.</span> One possibility is <span
+class="math inline"><em>G</em>(<em>t</em>) ≡ 0</span>, leading to the
+trivial solution <span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>) ≡ 0</span>.<br />
+More interesting would be <em>nontrivial solutions</em> which must have
+<span
+class="math display"><em>ϕ</em>(0) = <em>ϕ</em>(<em>L</em>) = 0.</span></p>
+</section>
+<section id="time-dependent-ode" class="frame">
+<h3>Time-dependent ODE</h3>
+<p>Looking at <span
+class="math inline"><em>G</em>′(<em>t</em>) = −<em>λ</em><em>k</em><em>G</em>(<em>t</em>)</span>
+as a constant coefficient homogeneous ODE, <span
+class="math display"><em>G</em>′ + <em>λ</em><em>k</em><em>G</em> = 0</span>
+has characteristic polynomial <span
+class="math inline"><em>r</em> + <em>λ</em><em>k</em> = 0</span> and so
+<span
+class="math display"><em>G</em>(<em>t</em>) = <em>c</em><em>e</em><sup>−<em>λ</em><em>k</em><em>t</em></sup>.</span>
+If <span class="math inline"><em>λ</em> &lt; 0</span>, this would cause
+exponentially growing temperatures as <span
+class="math inline"><em>t</em> → ∞</span> — not consistent with what we
+expect with our zero temperature ends. We’ll see indeed the
+space-dependent ODE and BC require <span
+class="math inline"><em>λ</em> ≥ 0</span>, which is why we introduced
+the <em>explicit minus sign</em> earlier.</p>
+</section>
+<section id="space-dependent-ode-and-bc-eigenvalue-problem"
+class="frame">
+<h3>Space-dependent ODE and BC: Eigenvalue problem</h3>
+<p>We have <span class="math display">$$\begin{aligned}
+\phi''(x) &amp;= - \lambda \phi(x), \\
+\phi(0) &amp;= 0, \\
+\phi(L) &amp;= 0.
+\end{aligned}$$</span> An <em>eigenvalue-eigenfunction pair</em> is a
+value for <span class="math inline"><em>λ</em></span> and a nontrivial
+solution <span class="math inline"><em>ϕ</em>(<em>x</em>)</span> to the
+above ODE and BC. The <em>eigenvalue problem</em> is to determine all
+the possible eigenvalue-eigenfunction pairs.</p>
+</section>
+<div class="frame">
+<p>The characteristic polynomial of this constant coefficient ODE is
+<span
+class="math display"><em>r</em><sup>2</sup> + <em>λ</em> = 0,</span>
+leading to three qualitatively different cases: <span
+class="math inline"><em>λ</em> &gt; 0, <em>λ</em> = 0, <em>λ</em> &lt; 0</span>.</p>
+</div>
+<section id="space-dependent-ode-and-bc-lambda-0" class="frame">
+<h3>Space-dependent ODE and BC: <span
+class="math inline"><em>λ</em> &gt; 0</span></h3>
+<p>We have <span class="math display">$$\phi(x) = c_1
+\cos(\sqrt{\lambda} x) + c_2 \sin(\sqrt{\lambda} x).$$</span> The left
+boundary yields <span
+class="math inline"><em>c</em><sub>1</sub> = 0,</span> and the right
+boundary yields <span class="math display">$$0 = c_2 \sin(\sqrt{\lambda}
+L).$$</span> The <span
+class="math inline"><em>c</em><sub>2</sub> = 0</span> possibility yields
+the trivial solution <span
+class="math inline"><em>u</em>(<em>x</em>, <em>t</em>) ≡ 0,</span> and
+so for nontrivial solutions we must have <span
+class="math display">$$\sqrt{\lambda} L = n\pi \mbox{ for some positive
+integer } n,$$</span> and so the separation constant <span
+class="math inline"><em>λ</em></span> satisfies <span
+class="math display">$$\lambda = \left( \frac{n \pi}{L}
+\right)^2$$</span> and then <span class="math display">$$\phi(x) = c
+\sin\left( \frac{n\pi x}{L} \right).$$</span></p>
+</section>
+<section id="space-dependent-ode-and-bc-lambda-0-1" class="frame">
+<h3>Space-dependent ODE and BC: <span
+class="math inline"><em>λ</em> = 0</span></h3>
+<p>For this case, <span class="math inline"><em>r</em> = 0</span> is a
+double root and so <span
+class="math display"><em>ϕ</em>(<em>x</em>) = <em>c</em><sub>1</sub><em>e</em><sup>0<em>x</em></sup> + <em>c</em><sub>2</sub><em>x</em><em>e</em><sup>0<em>x</em></sup> = <em>c</em><sub>1</sub> + <em>c</em><sub>2</sub><em>x</em>,</span>
+but then the BC force <span
+class="math inline"><em>c</em><sub>1</sub> = <em>c</em><sub>2</sub> = 0,</span>
+so no nontrivial solutions exist for <span
+class="math inline"><em>λ</em> = 0</span>.<br />
+It seems <span class="math inline"><em>λ</em> = 0</span> is NOT an
+eigenvalue for this particular problem — but this is not always the
+case! This needs to be checked individually.</p>
+</section>
+<section id="space-dependent-ode-and-bc-lambda-0-2" class="frame">
+<h3>Space-dependent ODE and BC: <span
+class="math inline"><em>λ</em> &lt; 0</span></h3>
+<p>Here we have real roots and so <span class="math display">$$\phi(x) =
+c_1 e^{\sqrt{-\lambda} x} + c_2 e^{-\sqrt{-\lambda}x}.$$</span> The
+boundary conditions become <span class="math display">$$\begin{aligned}
+c_1 + c_2 &amp;= 0,\\
+c_1 e^{L \sqrt{-\lambda}} + c_2 e^{-L\sqrt{-\lambda}} &amp;=0 \implies
+c_1 + c_2 e^{-2L\sqrt{-\lambda}} = 0.
+\end{aligned}$$</span> This means <span class="math display">$$c_2
+(1-e^{-2L\sqrt{-\lambda}}) = 0 \implies c_2 = c_1 = 0,$$</span> and so
+no nontrivial solutions can exist for <span
+class="math inline"><em>λ</em> &lt; 0.</span></p>
+</section>
+<section id="final-form-of-product-solutions-for-zero-temperature-ends"
+class="frame">
+<h3>Final form of product solutions for zero-temperature ends</h3>
+<p>The only possibility was <span class="math inline">$\lambda = \frac{n
+\pi}{L}$</span> for <span class="math inline"><em>n</em> &gt; 0</span>
+integer, and we have <span class="math display">$$u(x,t) = \phi(x) G(t)
+= B \sin \left( \frac{n \pi x}{L} \right) e^{-k(n\pi/L)^2
+t}.$$</span></p>
+</section>
+<section id="some-ic-are-very-easy-to-satisfy" class="frame">
+<h3>Some IC are very easy to satisfy</h3>
+<p>Solve the IBVP <span class="math display">$$\begin{aligned}
+\frac{\partial u}{\partial t} &amp;= k \frac{\partial^2 u}{\partial
+x^2}, \\
+u(0,t) &amp;= 0, \\
+u(L,t) &amp;= 0, \\
+u(x,0) &amp;= 4 \sin\left( \dfrac{3\pi x}{L} \right).
+\end{aligned}$$</span></p>
+</section>
+<section id="some-ic-are-very-easy-to-satisfy-1" class="frame">
+<h3>Some IC are very easy to satisfy</h3>
+<p>Solve the IBVP <span class="math display">$$\begin{aligned}
+\frac{\partial u}{\partial t} &amp;= k \frac{\partial^2 u}{\partial
+x^2}, \\
+u(0,t) &amp;= 0, \\
+u(L,t) &amp;= 0, \\
+u(x,0) &amp;= 7 \sin\left( \dfrac{8\pi x}{L} \right).
+\end{aligned}$$</span></p>
+</section>
+<section id="superposition" class="frame">
+<h3>Superposition</h3>
+<p>Solve the IBVP <span class="math display">$$\begin{aligned}
+\frac{\partial u}{\partial t} &amp;= k \frac{\partial^2 u}{\partial
+x^2}, \\
+u(0,t) &amp;= 0, \\
+u(L,t) &amp;= 0, \\
+u(x,0) &amp;= 4 \sin\left( \dfrac{3\pi x}{L} \right) + 7 \sin\left(
+\dfrac{8\pi x}{L} \right).
+\end{aligned}$$</span></p>
+</section>
+<section id="superposition-1" class="frame">
+<h3>Superposition</h3>
+<p>Solve the IBVP <span class="math display">$$\begin{aligned}
+\frac{\partial u}{\partial t} &amp;= k \frac{\partial^2 u}{\partial
+x^2}, \\
+u(0,t) &amp;= 0, \\
+u(L,t) &amp;= 0, \\
+u(x,0) &amp;= \sum_{n=1}^M B_n \sin\left( \dfrac{n \pi x}{L} \right) .
+\end{aligned}$$</span></p>
+</section>
+<section id="fourier-series-theory" class="frame">
+<h3>Fourier Series Theory</h3>
+<p>What if the initial temperature <span
+class="math inline"><em>u</em>(<em>x</em>, 0)</span> isn’t such a finite
+combination of sines?</p>
+<ol>
+<li><p>With some restrictions, any <span
+class="math inline"><em>u</em>(<em>x</em>, 0)</span> can be
+<em>approximated</em> by such a finite linear combination of sines by
+choosing <span class="math display">$$B_n = \frac 2 L \int_0^L u(x,0)
+\sin\left( \frac{n \pi x}{L} \right)\, dx \mbox{ for integer } n \geq
+1.$$</span></p></li>
+<li><p>In general this may not be accurate for small <span
+class="math inline"><em>M</em></span>, but becomes better and better as
+<span class="math inline"><em>M</em></span> is increased.</p></li>
+<li><p>As <span class="math inline"><em>M</em></span> increases, NOT
+ONLY does the above choice for <span
+class="math inline"><em>B</em><sub><em>n</em></sub></span>’s provide the
+most accurate approximation of <span
+class="math inline"><em>u</em>(<em>x</em>, 0)</span> as a linear
+combination of eigenfunctions of the PDE/BC, but it converges to <span
+class="math inline"><em>u</em>(<em>x</em>, 0)</span> as <span
+class="math inline"><em>M</em> → ∞</span> (with some more reasonable
+restrictions on <span
+class="math inline"><em>u</em>(<em>x</em>, 0)</span>).</p></li>
+</ol>
+</section>
+<div class="frame">
+<p>That is, for “any" initial temperature distribution <span
+class="math display"><em>u</em>(<em>x</em>, 0) = <em>f</em>(<em>x</em>)</span>
+we can write it as its Fourier sine series <span
+class="math display">$$f(x) = \sum_{n=1}^\infty B_n \sin\left( \frac{n
+\pi x}{L} \right)$$</span> where <span class="math display">$$B_n =
+\frac 2 L \int_0^L f(x) \sin\left( \frac{n \pi x}{L} \right)\, dx \mbox{
+for integer } n \geq 1.$$</span> Then, the PDE/BC
+eigenvalue/eigenfunction analysis and the principle of superposition
+means <span class="math display">$$u(x,t) = \sum_{n=1}^\infty B_n
+\sin\left( \frac{n \pi x}{L} \right) e^{-k(n\pi/L)^2 t}.$$</span> solves
+the IBVP consisting of the heat equation, the BC <span
+class="math inline"><em>u</em>(0, <em>t</em>) = <em>u</em>(<em>L</em>, <em>t</em>) = 0</span>,
+and the IC <span
+class="math inline"><em>u</em>(<em>x</em>, 0) = <em>f</em>(<em>x</em>).</span></p>
+</div>
+</body>
+</html>
