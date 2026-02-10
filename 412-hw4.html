@@ -7292,6 +7292,7 @@ a.anchor-link {
 }
 </style>
 <!-- Load mathjax -->
+
 <script>
 MathJax = {
   tex: {
@@ -7300,7 +7301,6 @@ MathJax = {
 };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
-
 <!-- End of mathjax configuration --><script type="module">
   document.addEventListener("DOMContentLoaded", async () => {
     const diagrams = document.querySelectorAll(".jp-Mermaid > pre.mermaid");
@@ -7617,7 +7617,7 @@ $$ h''(x) = \underbrace{\lambda}_{&gt; 0} h(x) \implies h(x) = c_1 \cosh( \sqrt{
 <p>Then,</p>
 <p>$$h'(x) = c_1 \sqrt{\lambda}\sinh[ \sqrt{\lambda} x ] + c_2 \sqrt{\lambda}\cosh[ \sqrt{\lambda} x].$$</p>
 <p>Since $\cosh 0 = 1, \sinh 0 = 0,$ the condition $h'(0) = 0$ implies $c_2 = 0$, and so (along with using the $\lambda$ values provided by the eigenvalue problem for the $y$ dependence) we have</p>
-<p>$$h(x) = c \cosh[ \sqrt{\lambda} (x-L)] = c\cosh\left( \frac{ n \pi x}{H} \right).$$</p>
+<p>$$h(x) = c \cosh[ \sqrt{\lambda} x] = c\cosh\left( \frac{ n \pi x}{H} \right).$$</p>
 <p>Putting it together, any nontrivial product solution must be of the form</p>
 <p>$$ u_p(x,y) = B \sin \left( \frac{n \pi y}{H} \right) \cosh \left( \frac{n \pi x}{H} \right), \quad n = 1, 2, 3, ... ,$$
 and so typical solutions to the PDE and homogeneous BC are</p>
