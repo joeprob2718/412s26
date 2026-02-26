@@ -7650,7 +7650,7 @@ Here we are doing a <strong>complex contour integral</strong> on a circle $\Gamm
 <p>Laplace's equation in polar coordinates takes the form
 $$ \frac 1 r \frac{\partial}{\partial r} \left( r \frac{\partial u}{\partial r} \right) + \frac{1}{r^2} \frac{\partial^2u}{\partial \theta^2} = 0 .$$</p>
 <h2 id="(a)">(a)<a class="anchor-link" href="#(a)">¶</a></h2><p>Product solutions $u_p = \phi(\theta) G(r)$ must satisfy the following HOMOGENEOUS ODEs and BC:
-$$  \left\{ \begin{array}{rll} \phi''(\theta) &amp;= - \lambda \phi(\theta), &amp; \textcolor{red}{\phi(0) = \phi(\pi) = 0} \\ \\ r^2 G''(r) + r G'(r)  &amp;= \lambda G(r), &amp; G(0) = 0  \end{array} \right. .$$</p>
+$$  \left\{ \begin{array}{rll} \phi''(\theta) &amp;= - \lambda \phi(\theta), &amp; \textcolor{red}{\phi(0) = \phi(\pi) = 0} \\ \\ r^2 G''(r) + r G'(r)  &amp;= \lambda G(r), &amp; |G(0)| &lt;\infty  \end{array} \right. .$$</p>
 <p>Instead of enforcing periodic conditions at $\theta = \pm \pi$, we enforce $\phi(0) = \phi(\pi) = 0$ so that $u=0$ on the diameter.</p>
 <p>The $\phi$ BVP is the first column on our usual reference table.  It tells us
 $$\phi(\theta) = \sin(n\theta) \mbox{ corresponding to } \lambda = n^2, \qquad n = 1, 2, ...$$
@@ -7663,7 +7663,7 @@ $$u(a, \theta) = \sum_{n=1}^\infty \underbrace{B_n a^n} \sin(n \theta).$$
 The usual coefficient formulas yield (with $L = \pi$)
 $$ \boxed{ B_n = \dfrac{2}{a^n \pi} \int_0^\pi g(\theta) \sin(n \theta) \, d\theta}.$$</p>
 <h2 id="(b)">(b)<a class="anchor-link" href="#(b)">¶</a></h2><p>Product solutions $u_p = \phi(\theta) G(r)$ must satisfy the following HOMOGENEOUS ODEs and BC:
-$$  \left\{ \begin{array}{rll} \phi''(\theta) &amp;= - \lambda \phi(\theta), &amp; \textcolor{red}{\phi'(0) = \phi'(\pi) = 0} \\ \\ r^2 G''(r) + r G'(r)  &amp;= \lambda G(r), &amp; G(0) = 0  \end{array} \right. .$$</p>
+$$  \left\{ \begin{array}{rll} \phi''(\theta) &amp;= - \lambda \phi(\theta), &amp; \textcolor{red}{\phi'(0) = \phi'(\pi) = 0} \\ \\ r^2 G''(r) + r G'(r)  &amp;= \lambda G(r), &amp; |G(0)|&lt; \infty  \end{array} \right. .$$</p>
 <p>Insulated means that there is no heat flowing out of the half-disk on the boundary, so that $\frac{\partial u}{\partial \theta} = 0$ on the diameter. (The radial derivative is differentiating tangent to the diameter; the angular partial derivative will be perpendicular to it.)</p>
 <p>The $\phi$ BVP is the second column on our usual reference table.  It tells us
 $$\phi(\theta) = \cos(n\theta) \mbox{ corresponding to } \lambda = n^2, \qquad n = 0, 1, 2, ...$$
