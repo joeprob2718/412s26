@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math 412 – Intro to PDEs & Ch 1: Heat Equation</title>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        macros: {
+          pderiv: ['\\frac{\\partial #1}{\\partial #2}', 2],
+          R: '\\mathbb{R}'
+        }
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --bg: #faf8f4;
+      --card: #ffffff;
+      --accent: #3b4fd8;
+      --accent2: #c0392b;
+      --annot: #d63384;
+      --muted: #6c757d;
+      --border: #e2ddd5;
+      --section-bg: #3b4fd8;
+      --code-bg: #f0efeb;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Sans 3', Georgia, serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.75;
+      font-size: 17px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--section-bg);
+      color: #fff;
+      padding: 3.5rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 40px,
+        rgba(255,255,255,.03) 40px, rgba(255,255,255,.03) 80px
+      );
+    }
+    header h1 {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 2.6rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      position: relative;
+    }
+    header p.subtitle {
+      font-size: 1.1rem;
+      opacity: .85;
+      margin-top: .5rem;
+      position: relative;
+    }
+
+    /* ── Nav / TOC ── */
+    nav {
+      background: var(--card);
+      border-bottom: 2px solid var(--border);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    nav details summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .95rem;
+      color: var(--accent);
+      list-style: none;
+      user-select: none;
+    }
+    nav details summary::before { content: '☰  '; }
+    nav ol {
+      margin: .75rem 0 0 1.25rem;
+      font-size: .88rem;
+      columns: 2;
+      column-gap: 2rem;
+    }
+    nav ol li { margin: .2rem 0; }
+    nav a { color: var(--accent); text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+    }
+
+    /* ── Section heading ── */
+    .section-header {
+      background: var(--section-bg);
+      color: #fff;
+      border-radius: 6px 6px 0 0;
+      padding: .6rem 1.2rem;
+      font-family: 'Lora', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-top: 3rem;
+      letter-spacing: .01em;
+    }
+
+    /* ── Content card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      padding: 1.6rem 1.8rem;
+      margin-bottom: .25rem;
+    }
+
+    h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 2.5rem 0 .6rem;
+      padding-bottom: .3rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    h3 {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 1.6rem 0 .4rem;
+    }
+
+    p { margin-bottom: 1rem; }
+
+    /* ── Definition / key term ── */
+    .defn {
+      border-left: 4px solid var(--accent);
+      background: #f0f2ff;
+      padding: .75rem 1.1rem;
+      margin: 1.1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .defn strong { color: var(--accent); }
+
+    /* ── Equation box ── */
+    .eq-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 4px;
+      padding: .9rem 1.2rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    /* ── Named box (IBVP, theorem, etc.) ── */
+    .named-box {
+      border: 2px solid var(--accent);
+      border-radius: 6px;
+      margin: 1.2rem 0;
+      overflow: hidden;
+    }
+    .named-box .box-title {
+      background: var(--accent);
+      color: #fff;
+      padding: .35rem .9rem;
+      font-weight: 600;
+      font-size: .9rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .named-box .box-body {
+      padding: .9rem 1.1rem;
+      background: #f5f6ff;
+    }
+
+    /* ── Annotations (hand-written notes) ── */
+    .annot {
+      color: var(--annot);
+      font-style: italic;
+      font-size: .9rem;
+    }
+    .annot::before { content: '✎ '; }
+
+    /* ── Bullet lists ── */
+    ul.content-list {
+      margin: .5rem 0 1rem 1.4rem;
+    }
+    ul.content-list li { margin: .4rem 0; }
+
+    /* ── ODE list ── */
+    .ode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin: 1rem 0;
+    }
+    .ode-item {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: .7rem .9rem;
+    }
+    .ode-item .ode-label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: .3rem;
+    }
+    @media (max-width: 560px) { .ode-grid { grid-template-columns: 1fr; } }
+
+    /* ── PDE table ── */
+    .pde-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: .95rem;
+    }
+    .pde-table th {
+      background: var(--section-bg);
+      color: #fff;
+      padding: .5rem .8rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    .pde-table td {
+      border: 1px solid var(--border);
+      padding: .5rem .8rem;
+      vertical-align: top;
+    }
+    .pde-table tr:nth-child(even) td { background: #f8f8fb; }
+
+    /* ── Physical quantities table ── */
+    .qty-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: .94rem;
+    }
+    .qty-table th {
+      background: #eef0fb;
+      color: var(--ink);
+      font-weight: 600;
+      padding: .45rem .7rem;
+      border-bottom: 2px solid var(--accent);
+      text-align: left;
+    }
+    .qty-table td {
+      border: 1px solid var(--border);
+      padding: .45rem .7rem;
+      vertical-align: top;
+    }
+    .qty-table tr:nth-child(even) td { background: #f9faff; }
+
+    /* ── Steps ── */
+    .steps {
+      counter-reset: step-counter;
+      margin: 1rem 0 1rem 0;
+    }
+    .step {
+      counter-increment: step-counter;
+      padding: .6rem 1rem .6rem 3rem;
+      margin: .5rem 0;
+      background: var(--code-bg);
+      border-radius: 5px;
+      position: relative;
+    }
+    .step::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: .8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      width: 1.5rem;
+      height: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .85rem;
+    }
+
+    /* ── Case blocks ── */
+    .case-block {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin: .8rem 0;
+      overflow: hidden;
+    }
+    .case-block .case-title {
+      padding: .4rem .9rem;
+      font-weight: 600;
+      font-size: .9rem;
+    }
+    .case-title.pos  { background: #d4edda; color: #155724; }
+    .case-title.zero { background: #fff3cd; color: #856404; }
+    .case-title.neg  { background: #f8d7da; color: #721c24; }
+    .case-block .case-body { padding: .8rem 1rem; }
+
+    /* ── Warning / key idea ── */
+    .warning-box {
+      background: #fff8e1;
+      border: 2px solid #f5c518;
+      border-radius: 6px;
+      padding: .8rem 1.1rem;
+      margin: 1rem 0;
+    }
+    .warning-box strong { color: #7a5c00; }
+
+    .key-idea {
+      background: #e8f5e9;
+      border-left: 4px solid #2e7d32;
+      padding: .75rem 1.1rem;
+      border-radius: 0 4px 4px 0;
+      margin: 1rem 0;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: .82rem;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+    }
+
+    /* ── Back-to-top ── */
+    .btt {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 2.8rem;
+      height: 2.8rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(0,0,0,.2);
+      transition: opacity .2s;
+      opacity: .8;
+    }
+    .btt:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Math 412</h1>
+  <p class="subtitle">Intro to PDEs &amp; Chapter 1: Heat Equation</p>
+</header>
+
+<nav>
+  <details>
+    <summary>Table of Contents</summary>
+    <ol>
+      <li><a href="#ode-review">ODE Review</a></li>
+      <li><a href="#what-is-pde">What is a PDE?</a></li>
+      <li><a href="#pde-examples">Examples of PDEs</a></li>
+      <li><a href="#course-outline">Course Outline</a></li>
+      <li><a href="#deriving-heat">Deriving the Heat Equation</a></li>
+      <li><a href="#physical-quantities">Physical Quantities</a></li>
+      <li><a href="#conservation">Conservation of Heat Energy</a></li>
+      <li><a href="#fouriers-law">Fourier's Law</a></li>
+      <li><a href="#heat-equation">The Heat Equation</a></li>
+      <li><a href="#initial-conditions">Initial &amp; Boundary Conditions</a></li>
+      <li><a href="#linear-operators">Linear Operators</a></li>
+      <li><a href="#superposition">Superposition Principle</a></li>
+      <li><a href="#separation">Separation of Variables</a></li>
+      <li><a href="#eigenvalue">Eigenvalue Problem</a></li>
+      <li><a href="#product-solutions">Product Solutions</a></li>
+      <li><a href="#fourier-series">Fourier Series Theory</a></li>
+    </ol>
+  </details>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="ode-review">Quick DE &amp; ODE Review</div>
+<div class="card">
+  <div class="defn">
+    <strong>Differential equation:</strong> An equation involving an unknown function and its derivative(s).
+  </div>
+  <p>For <em>ordinary differential equations (ODEs)</em>, the unknown dependent variable is a function of a <em>single</em> independent variable. Most often we think of this as time \(t\), so the ODE describes a <em>dynamical system</em>.</p>
+
+  <h3>Examples from Math 250/251</h3>
+  <div class="ode-grid">
+    <div class="ode-item">
+      <div class="ode-label">Exponential growth / decay</div>
+      \[ x' = ax \implies x(t) = x(0)\,e^{at} \]
+    </div>
+    <div class="ode-item">
+      <div class="ode-label">Separable first order</div>
+      \[ \frac{dx}{dt} = f(t)\,g(x) \]
+    </div>
+    <div class="ode-item">
+      <div class="ode-label">First order linear</div>
+      \[ \frac{dx}{dt} + P(t)\,x = Q(t) \]
+    </div>
+    <div class="ode-item">
+      <div class="ode-label">Driven mass-spring-dashpot</div>
+      \[ mx'' + cx' + kx = F(t) \]
+    </div>
+    <div class="ode-item" style="grid-column: 1 / -1;">
+      <div class="ode-label">Constant-coefficient homogeneous \(n\times n\) system</div>
+      \[ \vec{x}' = A\vec{x}, \quad A\text{ a constant }n\times n\text{ matrix} \]
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="what-is-pde">What is a PDE?</div>
+<div class="card">
+  <div class="defn">
+    <strong>Partial differential equation (PDE):</strong> An equation involving an unknown function and its <em>partial</em> derivatives. The solution is a function of <em>several</em> variables.
+  </div>
+  <p>We will encounter problems where the dependence is on <em>space and time</em>, on <em>multiple spatial variables</em>, or both. In Math 412 we focus primarily on the case of <strong>two independent variables</strong>.</p>
+  <p><strong>Subscript notation for partial derivatives:</strong></p>
+  \[ u_t = \frac{\partial u}{\partial t}, \qquad u_{tt} = \frac{\partial^2 u}{\partial t^2}, \qquad u_{xx} = \frac{\partial^2 u}{\partial x^2} \]
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="pde-examples">Examples of PDEs in Math 412</div>
+<div class="card">
+  <table class="pde-table">
+    <thead>
+      <tr><th>Name</th><th>Equation</th><th>Type</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Simple transport</td>
+        <td>\(u_t + c\,u_x = 0\)</td>
+        <td>Hyperbolic</td>
+      </tr>
+      <tr>
+        <td>Wave equation</td>
+        <td>\(u_{tt} = c^2\,u_{xx}, \quad c&gt;0\)</td>
+        <td>Hyperbolic</td>
+      </tr>
+      <tr>
+        <td>Heat / diffusion equation</td>
+        <td>\(u_t = k\,u_{xx}\)</td>
+        <td>Parabolic</td>
+      </tr>
+      <tr>
+        <td>Laplace's equation</td>
+        <td>\(u_{xx} + u_{yy} = 0\)</td>
+        <td>Elliptic</td>
+      </tr>
+      <tr>
+        <td>Burgers' equation</td>
+        <td>\(u_t + u\,u_x = 0\)</td>
+        <td>Nonlinear hyperbolic</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Laplace's equation describes steady-state / equilibrium solutions of the 2-D heat equation. Burgers' equation is a "toy model" for gas dynamics and the simplest nonlinear wave equation (its solutions develop <em>shock waves</em>).</p>
+  <p>The first four examples above are prototypical <strong>constant-coefficient homogeneous PDEs</strong>.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="course-outline">Rough Course Outline</div>
+<div class="card">
+  <p>We cover parts of <strong>Chapters 1–4, 10, 12</strong> of Haberman.</p>
+  <ul class="content-list">
+    <li>Start with the <strong>heat equation</strong> — it naturally leads to Fourier series.</li>
+    <li>Use Fourier series to solve the heat equation, Laplace's equation, and the wave equation on <em>bounded domains</em> (Ch 1–4).</li>
+    <li>Introduce the <strong>Fourier transform</strong> to solve these PDEs on unbounded domains (Ch 10).</li>
+    <li>Study the <strong>transport equation</strong> \(u_t + cu_x = 0\) and the wave equation via the method of characteristics (Ch 12.1–12.3).</li>
+    <li>End with <strong>Burgers' equation</strong> \(u_t + uu_x = 0\) and traffic-flow modeling (Ch 12.6).</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="deriving-heat">Ch 1.1 – Deriving the Heat Equation</div>
+<div class="card">
+  <p>We use the three-step philosophy of applied mathematics:</p>
+  <div class="steps">
+    <div class="step"><strong>Formulation</strong> – set up a mathematical model</div>
+    <div class="step"><strong>Solution</strong> – solve the resulting equations</div>
+    <div class="step"><strong>Interpretation</strong> – translate back to the physical problem</div>
+  </div>
+
+  <h3>Goal</h3>
+  <p>Write equations governing thermal energy transfer in a one-dimensional solid rod via <em>conduction</em>.</p>
+
+  <div class="defn">
+    <strong>Conduction:</strong> Transfer of heat due to molecular collisions. Kinetic vibrational energy passes between neighboring molecules even when the molecules themselves move little.
+  </div>
+  <div class="defn">
+    <strong>Convection:</strong> Moving molecules carry thermal energy from one place to another.
+  </div>
+  <p>We focus on solids, where conduction is the only mechanism. (Conduction dominates in liquids/gases too when fluid velocity is sufficiently small.)</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="physical-quantities">Physical Quantities</div>
+<div class="card">
+  <p>Consider a rod of constant cross-sectional area \(A\) occupying \(0 \le x \le L\). Assume all thermal quantities are uniform across any cross-section.</p>
+
+  <table class="qty-table">
+    <thead>
+      <tr><th>Symbol</th><th>Meaning</th><th>Units (SI)</th><th>Known?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>\(e(x,t)\)</td>
+        <td>Thermal energy density (per unit volume)</td>
+        <td>J/m³</td>
+        <td>Unknown</td>
+      </tr>
+      <tr>
+        <td>\(\phi(x,t)\)</td>
+        <td>Heat flux: energy per unit time flowing rightward per unit surface area. (\(\phi&gt;0\): flow right; \(\phi&lt;0\): flow left)</td>
+        <td>J/(s·m²)</td>
+        <td>Unknown</td>
+      </tr>
+      <tr>
+        <td>\(Q(x,t)\)</td>
+        <td>Sources: energy per unit volume generated per unit time (e.g. chemical reactions, electrical heating)</td>
+        <td>J/(s·m³)</td>
+        <td>Known</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="conservation">Conservation of Heat Energy</div>
+<div class="card">
+  <p>Consider an arbitrary segment \(a \le x \le b\). The rate of change of total thermal energy equals the net inflow across boundaries plus internal generation:</p>
+  \[
+    \frac{d}{dt}\int_a^b A\,e(x,t)\,dx
+    = A\phi(a,t) - A\phi(b,t) + \int_a^b A\,Q(x,t)\,dx.
+  \]
+  <p>Dividing by \(A\):</p>
+  \[
+    \frac{d}{dt}\int_a^b e\,dx = \phi(a,t) - \phi(b,t) + \int_a^b Q\,dx.
+  \]
+
+  <h3>Deriving the PDE</h3>
+  <p>Since \(a,b\) are constants and \(e\) is differentiable, we may pass the derivative inside the integral. The Fundamental Theorem of Calculus gives:</p>
+  \[
+    \phi(a,t) - \phi(b,t) = -\int_a^b \frac{\partial\phi}{\partial x}\,dx.
+  \]
+  <p>Combining:</p>
+  \[
+    \int_a^b \!\left(\frac{\partial e}{\partial t} + \frac{\partial\phi}{\partial x} - Q\right)dx = 0.
+  \]
+  <div class="key-idea">
+    <strong>Key Idea:</strong> If the integrand is continuous and this holds for <em>every</em> interval \([a,b]\), then the integrand must be identically zero.
+  </div>
+  <p>Therefore we obtain the differential equation (conservation law):</p>
+  \[
+    \boxed{\frac{\partial e}{\partial t} = -\frac{\partial\phi}{\partial x} + Q.}
+  \]
+  <p class="annot">One equation, two unknowns (\(e\) and \(\phi\)) — we need more physics.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="fouriers-law">Temperature, Specific Heat &amp; Fourier's Law</div>
+<div class="card">
+  <h3>Relating energy density to temperature</h3>
+  <table class="qty-table">
+    <thead>
+      <tr><th>Symbol</th><th>Meaning</th><th>Units</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>\(u(x,t)\)</td><td>Temperature</td><td>°C</td></tr>
+      <tr><td>\(c(x)\)</td><td>Specific heat (energy per unit mass per unit temperature rise)</td><td>J/(kg·°C)</td></tr>
+      <tr><td>\(\rho(x)\)</td><td>Mass density (mass per unit volume)</td><td>kg/m³</td></tr>
+    </tbody>
+  </table>
+  <p>The thermal energy density is:</p>
+  \[ e(x,t) = c(x)\,\rho(x)\,u(x,t). \]
+  <p>Substituting into the conservation law:</p>
+  \[ c(x)\,\rho(x)\,\frac{\partial u}{\partial t} = -\frac{\partial\phi}{\partial x} + Q. \]
+
+  <h3>Fourier's Law of Heat Conduction</h3>
+  <div class="defn">
+    <strong>Fourier's Law</strong> (Fourier, 1768–1830):
+    \[
+      \phi = -K_0\,\frac{\partial u}{\partial x},
+    \]
+    where \(K_0\) is the <em>thermal conductivity</em> — a material-specific constant measuring how readily the material conducts heat.
+  </div>
+  <p>Heat flows from hotter to cooler regions (\(\phi &gt; 0\) when \(\partial u/\partial x &lt; 0\), i.e., temperature decreasing to the right). For a non-uniform rod, \(K_0 = K_0(x)\); for a uniform rod, \(K_0 = \text{const}\).</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="heat-equation">The Heat Equation</div>
+<div class="card">
+  <p>Substituting Fourier's law into the conservation law for a rod with possibly varying material properties:</p>
+  \[
+    c(x)\,\rho(x)\,\frac{\partial u}{\partial t}
+    = \frac{\partial}{\partial x}\!\left(K_0(x)\,\frac{\partial u}{\partial x}\right) + Q(x,t).
+  \]
+  <p>For a <strong>uniform rod</strong> (constant \(c,\rho,K_0\)) with <strong>no sources</strong> (\(Q=0\)):</p>
+  <div class="named-box">
+    <div class="box-title">The Heat Equation</div>
+    <div class="box-body">
+      \[
+        \frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}, \qquad
+        k = \frac{K_0}{c\rho} > 0 \text{ (thermal diffusivity).}
+      \]
+    </div>
+  </div>
+  <p>This equation is also called the <em>diffusion equation</em> and is related to Fick's Law in chemistry.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="initial-conditions">Initial &amp; Boundary Conditions</div>
+<div class="card">
+  <h3>Why additional conditions are needed</h3>
+  <p>The heat PDE alone has infinitely many solutions. To make unique predictions we need both an <em>initial condition (IC)</em> and <em>boundary conditions (BCs)</em>.</p>
+
+  <h3>Initial condition</h3>
+  <p>Specify the entire temperature profile at \(t=0\):</p>
+  \[ u(x,0) = f(x), \quad 0 \le x \le L. \]
+
+  <h3>Boundary conditions at each end</h3>
+  <p>At each endpoint (\(x=0\) or \(x=L\)) choose one of:</p>
+  <ul class="content-list">
+    <li><strong>Prescribed temperature:</strong> \(u(\cdot,t) = u_B(t)\)</li>
+    <li><strong>Prescribed heat flux:</strong> \(-K_0\dfrac{\partial u}{\partial x}(\cdot,t) = \phi(t)\); &nbsp; \(\phi\equiv 0\) is "perfectly insulated"</li>
+    <li><strong>Newton's law of cooling:</strong> \(-K_0\dfrac{\partial u}{\partial x}(\cdot,t) = h\bigl[u(\cdot,t)-u_B(t)\bigr]\)</li>
+  </ul>
+
+  <h3>The IBVP (zero-temperature ends)</h3>
+  <div class="named-box">
+    <div class="box-title">Initial-Boundary Value Problem (IBVP)</div>
+    <div class="box-body">
+      \[
+        \begin{cases}
+          \text{PDE:} & \displaystyle\frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}, \quad 0 < x < L,\; t > 0,\\[6pt]
+          \text{BC:}  & u(0,t) = u(L,t) = 0, \quad t > 0,\\[4pt]
+          \text{IC:}  & u(x,0) = f(x), \quad 0 \le x \le L.
+        \end{cases}
+      \]
+      <p style="margin-top:.7rem;"><strong>Goal:</strong> find \(u(x,t)\) for \(0 < x < L\), \(t > 0\).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="linear-operators">Linear Operators &amp; Homogeneity</div>
+<div class="card">
+  <div class="defn">
+    <strong>Linear operator:</strong> An operator \(\mathcal{L}\) satisfying
+    \[
+      \mathcal{L}(c_1 u_1 + c_2 u_2) = c_1\,\mathcal{L}(u_1) + c_2\,\mathcal{L}(u_2)
+    \]
+    for all functions \(u_1,u_2\) and constants \(c_1,c_2\).
+  </div>
+
+  <p>The <strong>heat operator</strong> is:</p>
+  \[ \mathcal{L}(u) := \frac{\partial u}{\partial t} - k\,\frac{\partial^2 u}{\partial x^2}. \]
+  <p>Linearity is verified by direct computation using the linearity of partial derivatives.</p>
+
+  <p>A <em>linear homogeneous equation</em> is \(\mathcal{L}(u)=0\); a <em>linear non-homogeneous equation</em> is \(\mathcal{L}(u)=f\) with \(f\ne 0\). The trivial solution \(u\equiv 0\) always solves every linear homogeneous equation.</p>
+
+  <h3>Homogeneous BCs</h3>
+  <p>A boundary condition is <em>homogeneous</em> when \(u\equiv 0\) satisfies it. For example:</p>
+  <ul class="content-list">
+    <li>Zero temperature ends: \(u(0,t) = u(L,t) = 0\) ✓</li>
+    <li>Insulated ends: \(\dfrac{\partial u}{\partial x}(0,t) = \dfrac{\partial u}{\partial x}(L,t) = 0\) ✓</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="superposition">Principle of Superposition</div>
+<div class="card">
+  <div class="named-box">
+    <div class="box-title">Principle of Superposition</div>
+    <div class="box-body">
+      If \(u_1\) and \(u_2\) each satisfy a <em>linear homogeneous</em> equation (and homogeneous BCs), then so does any linear combination \(c_1 u_1 + c_2 u_2\).
+    </div>
+  </div>
+  <p>The solution space of a linear homogeneous equation forms a <strong>vector space</strong>. In ODE courses this was finite-dimensional (related to matrix null spaces). For PDEs, the solution spaces are <em>infinite-dimensional</em> — the realm of <strong>Fourier series</strong> and functional analysis.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="separation">Ch 2 – Method of Separation of Variables</div>
+<div class="card">
+  <div class="warning-box">
+    <strong>Terminology:</strong> "Separation of variables" for PDEs is <em>not</em> the same as "separable ODEs." It is an <em>ansatz</em> (educated guess) about the form of the solution, not a property of the equation.
+  </div>
+
+  <p>Separation of variables for PDEs is suitable when the PDE and BCs are <em>linear and homogeneous</em>. We seek a <strong>product solution</strong>:</p>
+  \[ u(x,t) = \phi(x)\,G(t). \]
+  <p class="annot">First proposed by Daniel Bernoulli in the 1700s.</p>
+
+  <h3>Applying the ansatz to the heat equation</h3>
+  <p>Substituting into \(u_t = k\,u_{xx}\):</p>
+  \[ \phi(x)\,G'(t) = k\,\phi''(x)\,G(t). \]
+  <p>Dividing both sides by \(k\,\phi(x)\,G(t)\):</p>
+  \[ \frac{1}{kG(t)}\,G'(t) = \frac{1}{\phi(x)}\,\phi''(x). \]
+  <p>The left side depends only on \(t\); the right side depends only on \(x\). Since \(x\) and \(t\) are independent, both sides must equal the same constant. Writing the constant as \(-\lambda\):</p>
+  \[
+    \frac{G'(t)}{kG(t)} = \frac{\phi''(x)}{\phi(x)} = -\lambda.
+  \]
+
+  <p>The single PDE separates into two coupled constant-coefficient homogeneous ODEs:</p>
+  <div class="eq-box">
+    \[
+      \phi''(x) = -\lambda\,\phi(x), \qquad G'(t) = -\lambda k\,G(t).
+    \]
+  </div>
+
+  <p>Applying the zero-temperature BCs \(u(0,t)=u(L,t)=0\) forces:</p>
+  \[ \phi(0) = \phi(L) = 0. \]
+  <p>(The alternative \(G(t)\equiv 0\) gives only the trivial solution.)</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="eigenvalue">Eigenvalue Problem</div>
+<div class="card">
+  <div class="named-box">
+    <div class="box-title">Eigenvalue Problem</div>
+    <div class="box-body">
+      Find all \(\lambda\) and non-trivial \(\phi(x)\) satisfying:
+      \[
+        \phi''(x) = -\lambda\,\phi(x), \quad \phi(0)=0, \quad \phi(L)=0.
+      \]
+    </div>
+  </div>
+  <p>An <em>eigenvalue–eigenfunction pair</em> \((\lambda, \phi)\) is analogous to an eigenvalue–eigenvector pair \((\lambda, \vec{v})\) for a matrix \(A\vec{v} = \lambda\vec{v}\).</p>
+
+  <p>The characteristic polynomial of the ODE is \(r^2 + \lambda = 0\). Three cases:</p>
+
+  <div class="case-block">
+    <div class="case-title pos">Case 1: \(\lambda > 0\)</div>
+    <div class="case-body">
+      <p>Roots are \(r = \pm i\sqrt{\lambda}\), giving:</p>
+      \[ \phi(x) = c_1\cos(\sqrt{\lambda}\,x) + c_2\sin(\sqrt{\lambda}\,x). \]
+      <p>BC \(\phi(0)=0 \Rightarrow c_1=0\). BC \(\phi(L)=0 \Rightarrow c_2\sin(\sqrt{\lambda}\,L)=0\).</p>
+      <p>For non-trivial solutions: \(\sqrt{\lambda}\,L = n\pi\) for some positive integer \(n\). Thus:</p>
+      \[
+        \lambda_n = \left(\frac{n\pi}{L}\right)^{\!2}, \qquad
+        \phi_n(x) = \sin\!\left(\frac{n\pi x}{L}\right), \quad n=1,2,3,\ldots
+      \]
+    </div>
+  </div>
+
+  <div class="case-block">
+    <div class="case-title zero">Case 2: \(\lambda = 0\)</div>
+    <div class="case-body">
+      <p>Double root \(r=0\), so \(\phi(x) = c_1 + c_2 x\). The BCs force \(c_1=c_2=0\). <strong>No nontrivial solutions.</strong></p>
+      <p class="annot">\(\lambda=0\) is NOT an eigenvalue here, but it IS for insulated ends or periodic BCs.</p>
+    </div>
+  </div>
+
+  <div class="case-block">
+    <div class="case-title neg">Case 3: \(\lambda < 0\)</div>
+    <div class="case-body">
+      <p>Roots \(r = \pm\sqrt{-\lambda}\) are real and non-zero:
+      \[\phi(x) = c_1 e^{\sqrt{-\lambda}\,x} + c_2 e^{-\sqrt{-\lambda}\,x}.\]
+      The BCs yield \(c_1+c_2=0\) and \(c_2(1 - e^{-2L\sqrt{-\lambda}})=0\). Since the exponential factor is never 1 for \(\lambda < 0\), we get \(c_1=c_2=0\). <strong>No nontrivial solutions.</strong></p>
+    </div>
+  </div>
+
+  <h3>Time ODE</h3>
+  <p>For each eigenvalue \(\lambda_n\), the time equation \(G' = -\lambda_n k G\) gives:</p>
+  \[ G_n(t) = e^{-k(n\pi/L)^2\,t}. \]
+  <p class="annot">If \(\lambda < 0\) the time factor would grow exponentially — physically inconsistent with zero-temperature ends, confirming why only \(\lambda_n > 0\) appear.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="product-solutions">Product Solutions &amp; Superposition</div>
+<div class="card">
+  <p>Each eigenvalue gives a <strong>product (separated) solution</strong>:</p>
+  \[
+    u_n(x,t) = B_n\,\sin\!\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2\,t}, \quad n=1,2,3,\ldots
+  \]
+  <p>These satisfy the PDE and both BCs. The constant \(B_n\) is free.</p>
+
+  <div class="warning-box">
+    <strong>Warning:</strong> A typical solution \(u(x,t)\) is <em>not</em> itself a product solution — it is a <strong>linear combination</strong> of product solutions.
+  </div>
+
+  <h3>Example 1</h3>
+  <p>Solve the IBVP with IC \(u(x,0) = 4\sin(3\pi x/L)\).</p>
+  <p>This is exactly the \(n=3\) eigenfunction, so:</p>
+  \[ u(x,t) = 4\sin\!\left(\frac{3\pi x}{L}\right)e^{-k(3\pi/L)^2\,t}. \]
+
+  <h3>Example 2</h3>
+  <p>Solve with IC \(u(x,0) = 7\sin(8\pi x/L)\):</p>
+  \[ u(x,t) = 7\sin\!\left(\frac{8\pi x}{L}\right)e^{-k(8\pi/L)^2\,t}. \]
+
+  <h3>Example 3 (Superposition)</h3>
+  <p>Solve with IC \(u(x,0) = 4\sin(3\pi x/L) + 7\sin(8\pi x/L)\):</p>
+  \[
+    u(x,t) = 4\sin\!\left(\frac{3\pi x}{L}\right)e^{-k(3\pi/L)^2\,t}
+           + 7\sin\!\left(\frac{8\pi x}{L}\right)e^{-k(8\pi/L)^2\,t}.
+  \]
+
+  <h3>General finite superposition</h3>
+  <p>If \(u(x,0) = \displaystyle\sum_{n=1}^{M} B_n \sin\!\left(\frac{n\pi x}{L}\right)\), then:</p>
+  \[
+    u(x,t) = \sum_{n=1}^{M} B_n\,\sin\!\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2\,t}.
+  \]
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section-header" id="fourier-series">Fourier Series Theory</div>
+<div class="card">
+  <p>What if the initial temperature \(u(x,0) = f(x)\) is not a finite combination of sines?</p>
+
+  <div class="named-box">
+    <div class="box-title">Fourier Sine Series</div>
+    <div class="box-body">
+      For "any" \(f(x)\) on \([0,L]\):
+      \[
+        f(x) = \sum_{n=1}^{\infty} B_n\,\sin\!\left(\frac{n\pi x}{L}\right),
+      \]
+      where the Fourier sine coefficients are:
+      \[
+        B_n = \frac{2}{L}\int_0^L f(x)\,\sin\!\left(\frac{n\pi x}{L}\right)dx, \quad n \ge 1.
+      \]
+    </div>
+  </div>
+
+  <p>Key facts about this representation:</p>
+  <ul class="content-list">
+    <li>The formula for \(B_n\) gives the <em>best approximation</em> of \(f\) as a linear combination of the eigenfunctions.</li>
+    <li>For small \(M\) the partial sum may not be very accurate, but it improves as \(M \to \infty\).</li>
+    <li>Under mild conditions on \(f\), the infinite series converges to \(f(x)\).</li>
+  </ul>
+
+  <div class="named-box">
+    <div class="box-title">General Solution of the IBVP</div>
+    <div class="box-body">
+      <p>For the IBVP with zero-temperature BCs and IC \(u(x,0)=f(x)\):</p>
+      \[
+        u(x,t) = \sum_{n=1}^{\infty} B_n\,\sin\!\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2\,t},
+      \]
+      where \(\displaystyle B_n = \frac{2}{L}\int_0^L f(x)\,\sin\!\left(\frac{n\pi x}{L}\right)dx\).
+    </div>
+  </div>
+  <p>This satisfies the heat equation, the BCs \(u(0,t)=u(L,t)=0\), and the IC \(u(x,0)=f(x)\). &nbsp;<em>Fourier series theory is what makes this work in general.</em></p>
+</div>
+
+</main>
+
+<footer>
+  Math 412 – Intro to PDEs &amp; Chapter 1: Heat Equation &nbsp;|&nbsp; Converted from lecture slides
+</footer>
+
+<button class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+</body>
+</html>

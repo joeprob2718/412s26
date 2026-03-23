@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 412 — Ch. 10: Fourier Transform for Unbounded Domains</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$']],
+    displayMath: [['$$','$$']],
+    tags: 'ams'
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #faf9f6;
+    --text: #1a1a2e;
+    --heading-bg: #2b2b8c;
+    --heading-text: #fff;
+    --accent: #c0392b;
+    --annotation-red: #c0392b;
+    --annotation-pink: #d63384;
+    --annotation-green: #1a7a3a;
+    --annotation-orange: #e67e22;
+    --annotation-blue: #2563eb;
+    --annotation-purple: #7c3aed;
+    --card-bg: #fff;
+    --border: #e0ddd5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  header {
+    background: var(--heading-bg);
+    color: var(--heading-text);
+    padding: 2.5rem 2rem;
+    border-radius: 6px;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  header h1 { font-family: 'Source Sans 3', sans-serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+  header p { font-size: 1.3rem; font-weight: 300; opacity: 0.9; }
+
+  h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 1.5rem;
+    background: var(--heading-bg); color: var(--heading-text);
+    padding: 0.6rem 1.2rem; border-radius: 4px;
+    margin: 2.5rem 0 1.2rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  .slide {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .annotation {
+    border-left: 3px solid var(--annotation-red);
+    background: #fdf2f0;
+    padding: 0.6rem 1rem;
+    margin: 0.8rem 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 1.05rem;
+  }
+  .annotation::before { content: "✏️ "; font-size: 0.95rem; }
+  .annotation.pink { border-left-color: var(--annotation-pink); background: #fdf0f6; }
+  .annotation.green { border-left-color: var(--annotation-green); background: #f0faf3; }
+  .annotation.orange { border-left-color: var(--annotation-orange); background: #fef7ed; }
+  .annotation.blue { border-left-color: var(--annotation-blue); background: #eff4ff; }
+
+  .eq-box {
+    border: 2px solid var(--annotation-orange);
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 0;
+    background: #fffcf5;
+    text-align: center;
+  }
+
+  .eq-highlight {
+    background: #fff9e6;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin: 0.8rem 0;
+    text-align: center;
+  }
+
+  .page-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #999;
+    text-align: right;
+    margin-top: 0.5rem;
+  }
+
+  .emphasis { color: var(--accent); font-weight: 600; }
+  .italic-term { font-style: italic; }
+
+  .footnote {
+    font-size: 0.95rem;
+    color: #555;
+    border-top: 1px solid var(--border);
+    padding-top: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  nav.toc {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  nav.toc h3 { margin-top: 0; font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 1.2rem; color: var(--heading-bg); }
+  nav.toc ol { margin-left: 1.2rem; }
+  nav.toc a { color: var(--heading-bg); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem; font-size: 1.05rem; }
+    header { padding: 1.5rem 1rem; }
+    header h1 { font-size: 1.5rem; }
+    .slide { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Math 412</h1>
+  <p>Ch. 10: Fourier Transform for Unbounded Spatial Domain Problems</p>
+</header>
+
+<nav class="toc" aria-label="Table of Contents">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#heat-line">Heat Equation on the Real Line</a></li>
+    <li><a href="#bc">Boundary Conditions</a></li>
+    <li><a href="#eigenvalues">Eigenvalue Analysis</a></li>
+    <li><a href="#product">Product Solutions &amp; Continuous Superposition</a></li>
+    <li><a href="#fourier-transform">Connection to the Fourier Transform</a></li>
+  </ol>
+</nav>
+
+<!-- Slide 2 -->
+<section id="heat-line">
+<h2>Heat Equation on the Real Line</h2>
+
+<div class="slide">
+<p>Instead of a rod occupying the finite domain $0 \le x \le L$, we consider</p>
+
+<div class="eq-box">
+$$\begin{cases}
+\text{PDE:} & \dfrac{\partial u}{\partial t} = k\,\dfrac{\partial^2 u}{\partial x^2}, \quad -\infty < x < \infty,\; t > 0 \\[10pt]
+\text{IC:} & u(x,0) = f(x), \quad -\infty < x < \infty
+\end{cases}$$
+</div>
+
+<div class="annotation">
+The spatial domain is now the <strong>entire real line</strong> $(-\infty, \infty)$ — no finite boundary!
+</div>
+
+<p>For physical reasons (so the total thermal energy has a chance to be bounded), we consider initial conditions $f(x)$ satisfying</p>
+$$\lim_{x \to \pm\infty} f(x) = 0,$$
+
+<p>and seek solutions that satisfy</p>
+$$\lim_{x \to \pm\infty} u(x,t) = 0 \quad \text{for all } t > 0.$$
+
+<p class="page-num">2/10</p>
+</div>
+</section>
+
+<!-- Slide 3 -->
+<section>
+<div class="slide">
+<p>Therefore, we consider</p>
+
+$$\begin{cases}
+\text{PDE:} & \dfrac{\partial u}{\partial t} = k\,\dfrac{\partial^2 u}{\partial x^2}, \quad -\infty < x < \infty,\; t > 0 \\[10pt]
+\text{"BC":} & u(-\infty, t) = u(\infty, t) = 0 \quad t > 0 \\[10pt]
+\text{IC:} & u(x,0) = f(x), \quad -\infty < x < \infty
+\end{cases}$$
+
+<p>where $u(\pm\infty, t)$ are understood as limits.</p>
+
+<p class="page-num">3/10</p>
+</div>
+</section>
+
+<!-- Slide 4 -->
+<section>
+<div class="slide">
+<p>As usual, let's first seek product solutions of the form</p>
+$$u(x,t) = \phi(x)\,G(t),$$
+
+<p>leading to</p>
+$$\frac{G'(t)}{k\,G(t)} = \frac{\phi''(x)}{\phi(x)} =: -\lambda,$$
+
+<p>yielding the coupled ODEs</p>
+
+$$\begin{cases}
+\phi''(x) = -\lambda\,\phi(x) \\[4pt]
+G'(t) = -\lambda\, k\, G(t)
+\end{cases}$$
+
+<p class="page-num">4/10</p>
+</div>
+</section>
+
+<!-- Slide 5 -->
+<section id="bc">
+<h2>Boundary Conditions</h2>
+
+<div class="slide">
+<p>You might guess that we want to enforce $\phi(\pm\infty) = 0$ to guarantee $u(\pm\infty, t) = 0$ for all $t > 0$.</p>
+
+<p>However, that won't allow for any nontrivial solutions for $\phi(x)$, and so we instead require that <strong>$\phi(x)$ is bounded</strong> for all $x$.</p>
+
+<p>Once we superimpose solutions, we'll be able to see that this condition is sufficient to guarantee $u(\pm\infty, t) = 0$.</p>
+
+<p>The book writes this as $|\phi(\pm\infty)| < \infty$, although I'm not a fan of this notation since it suggests the limits exist — this is the case when writing $u(\pm\infty, t) = 0$. Perhaps a better way to write this would be: there exists a number $C > 0$ so that</p>
+
+$$|\phi(x)| < C \quad \text{for all } -\infty < x < \infty,$$
+
+<p>or just say $\phi(x)$ is <strong>bounded on the entire real line</strong>.</p>
+
+<p class="footnote"><sup>1</sup> The distinction wasn't important when considering the region exterior to a disk when we solved the Laplacian in polar coordinates — requiring boundedness ended up requiring the limit existed and was zero. As we'll see, we get cosines and sines here whose limits don't exist as $x \to \pm\infty$.</p>
+
+<p class="page-num">5/10</p>
+</div>
+</section>
+
+<!-- Slide 6 -->
+<section id="eigenvalues">
+<h2>Eigenvalue Analysis</h2>
+
+<div class="slide">
+<p>Therefore, our coupled ODEs and boundary conditions are</p>
+
+$$\begin{cases}
+\phi''(x) = -\lambda\,\phi(x), & -\infty < x < \infty, \quad \phi(x) \text{ is bounded} \\[6pt]
+G'(t) = -\lambda\, k\, G, & t \ge 0
+\end{cases}$$
+
+<div class="annotation">
+Characteristic polynomial: $r^2 + \lambda = 0$.
+</div>
+
+<p>As the spatial eigenvalue problem has "boundary conditions" (boundedness), this is our eigenvalue problem that we'll use to find the possible values of the separation constant $\lambda$.</p>
+
+<h3 style="font-family:'Source Sans 3',sans-serif; font-weight:600; font-size:1.15rem; color:var(--heading-bg); margin:1.2rem 0 0.6rem; border-bottom:2px solid var(--border); padding-bottom:0.2rem;">Case $\lambda < 0$</h3>
+
+<p>The solution is</p>
+$$\phi(x) = c_1\cosh(\sqrt{-\lambda}\,x) + c_2\sinh(\sqrt{-\lambda}\,x),$$
+
+<p>(or a linear combination of $e^{\pm\sqrt{-\lambda}\,x}$).</p>
+
+<div class="annotation">
+$\cosh x = \frac{e^x + e^{-x}}{2}$, $\sinh x = \frac{e^x - e^{-x}}{2}$
+</div>
+
+<p>However, both $|\cosh(x)|$ and $|\sinh(x)|$ diverge to $\infty$ at both $x \to \pm\infty$, and so boundedness would require $c_1 = c_2 = 0$. (Similarly, $e^{\sqrt{-\lambda}\,x}$ is unbounded as $x \to +\infty$, and $e^{-\sqrt{-\lambda}\,x}$ is unbounded as $x \to -\infty$, hence only the trivial solution is bounded for all $x$.)</p>
+
+<p>Therefore, <strong>nontrivial solutions cannot exist for $\lambda < 0$</strong>.</p>
+
+<p class="page-num">6/10</p>
+</div>
+</section>
+
+<!-- Slide 7 -->
+<section>
+<div class="slide">
+<h3 style="font-family:'Source Sans 3',sans-serif; font-weight:600; font-size:1.15rem; color:var(--heading-bg); margin:0 0 0.8rem; border-bottom:2px solid var(--border); padding-bottom:0.2rem;">Cases $\lambda = 0$ and $\lambda > 0$</h3>
+
+<p>For $\lambda = 0$ we have bounded constant solutions</p>
+$$\phi(x) = c_1$$
+<p>for any $c_1$.</p>
+
+<p>If $\lambda > 0$ we have bounded solutions</p>
+$$\phi(x) = c_1\cos(\sqrt{\lambda}\,x) + c_2\sin(\sqrt{\lambda}\,x)$$
+<p>for any constants $c_1, c_2$.</p>
+
+<p>For Fourier series problems on bounded domains, the allowed eigenvalues were <strong>discrete</strong>. However, this <span class="emphasis">spectrum</span> (set for which the differential operator $\left(\dfrac{d^2}{dx^2} + \lambda\right)$ is not invertible) is a <span class="emphasis">continuous spectrum</span> — any $\lambda \ge 0$ is allowed.<sup>2</sup></p>
+
+<p class="footnote"><sup>2</sup> Technically the word "eigenvalue" is reserved for elements of the spectrum possessing associated square-integrable eigenfunctions — these functions here would be called <strong>generalized eigenfunctions</strong> since they are not square integrable. However, superimposing them appropriately will yield square-integrable functions $u(x,t)$.</p>
+
+<p class="page-num">7/10</p>
+</div>
+</section>
+
+<!-- Slide 8 -->
+<section id="product">
+<h2>Product Solutions &amp; Continuous Superposition</h2>
+
+<div class="slide">
+<p>If $\lambda = 0$ then $G(t) = C$, and if $\lambda > 0$ it follows $G(t) = Ce^{-\lambda k t}$.</p>
+
+<p>Putting it together, possible product solutions are</p>
+
+<div class="eq-highlight">
+$$u_p(x,t) = \cos(\sqrt{\lambda}\,x)\,e^{-\lambda k t} \quad \text{or} \quad \sin(\sqrt{\lambda}\,x)\,e^{-\lambda k t}, \quad \lambda \ge 0.$$
+</div>
+
+<p>Instead of a summation of the (countable) discrete values of $\lambda$, we can write a typical solution as an integral ("<span class="emphasis">continuous sum</span>"):</p>
+
+<div class="eq-box">
+$$u(x,t) = \int_0^{\infty}\left[c_1(\lambda)\cos(\sqrt{\lambda}\,x)\,e^{-\lambda k t} + c_2(\lambda)\sin(\sqrt{\lambda}\,x)\,e^{-\lambda k t}\right]d\lambda,$$
+</div>
+
+<p>where $c_1(\lambda), c_2(\lambda)$ are arbitrary functions of the continuous variable $\lambda$ (which is why we're not using subscript sequence notation).</p>
+
+<p>Under suitable hypotheses on $c_1(\cdot), c_2(\cdot)$, we can justify differentiating under the integral sign to verify this "continuous sum" satisfies the PDE, which we can call the <span class="emphasis">generalized superposition principle</span>.</p>
+
+<p class="page-num">8/10</p>
+</div>
+</section>
+
+<!-- Slide 9 -->
+<section id="fourier-transform">
+<h2>Connection to the Fourier Transform</h2>
+
+<div class="slide">
+<p>Since $\lambda \ge 0$, let's write $\lambda = \omega^2$ for a real frequency $\omega \ge 0$, so that we have<sup>3</sup></p>
+
+<div class="eq-box">
+$$u(x,t) = \int_0^{\infty}\left[A(\omega)\cos(\omega x)\,e^{-k\omega^2 t} + B(\omega)\sin(\omega x)\,e^{-k\omega^2 t}\right]d\omega.$$
+</div>
+
+<p>Compare this to our solution on the bounded region $[-L, L]$ with periodic boundary conditions: the allowable frequencies were <strong>discrete</strong>,</p>
+
+<div class="annotation">
+$\omega_n = \dfrac{n\pi}{L}$
+</div>
+
+<p>so we had an infinite sum:</p>
+
+$$u(x,t) = \sum_{n=0}^{\infty} a_n\cos\frac{n\pi x}{L}\,e^{-k(n\pi/L)^2 t} + \sum_{n=1}^{\infty} b_n\sin\frac{n\pi x}{L}\,e^{-k(n\pi/L)^2 t}.$$
+
+<p class="footnote"><sup>3</sup> Since $d\lambda = 2\omega\,d\omega$, these new arbitrary functions satisfy $A(\omega) = 2\sqrt{\lambda}\,c_1(\lambda)$, similar for $B(\omega)$. However, you're used to relabeling arbitrary constants in ODE general solutions from Math 250/1, this is the same idea but for arbitrary functions!</p>
+
+<p class="page-num">9/10</p>
+</div>
+</section>
+
+<!-- Slide 10 -->
+<section>
+<div class="slide">
+<p><strong>Warning:</strong> Many texts reserve $\omega$ for representing a temporal frequency and use $k$ for spatial frequencies. We're used to using $k$ for thermal diffusivity, so we'll use $\omega$ for a spatial frequency here.</p>
+
+<p>Then, implementing the initial condition $u(x,0) = f(x)$, we need</p>
+
+<div class="eq-box">
+$$f(x) = u(x,0) = \int_0^{\infty}\left[A(\omega)\cos(\omega x) + B(\omega)\sin(\omega x)\right]d\omega.$$
+</div>
+
+<p>Similar to how $(a_n), (b_n)$ were the Fourier coefficients for $f(x)$ in the $[-L, L]$ periodic BC problem; these functions $A(\omega), B(\omega)$ will be related to what we'll call the <span class="emphasis">Fourier transform</span> of $f(x)$.</p>
+
+<p>We could have discussed the complex exponential form for Fourier series (see section 3.6). We will do that next since it makes Fourier transform computations and notation more compact, and is used more often than the complex form for Fourier series.</p>
+
+<p class="page-num">10/10</p>
+</div>
+</section>
+
+</body>
+</html>

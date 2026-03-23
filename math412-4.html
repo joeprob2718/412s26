@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 412 — Section 2.5: Well-Posedness (Maximum Principle &amp; Energy Method)</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    macros: {
+      pd: ['\\frac{\\partial #1}{\\partial #2}', 2],
+      pdd: ['\\frac{\\partial^2 #1}{\\partial #2^2}', 2],
+    }
+  },
+  options: { enableMenu: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf7;
+    --text: #1a1a1a;
+    --accent: #2b3a8e;
+    --accent2: #b5232a;
+    --annot: #c4197a;
+    --annot-bg: #fdf0f6;
+    --annot-border: #e88abf;
+    --blue-annot: #1a5fb4;
+    --green-annot: #1a7a2e;
+    --orange-annot: #d45e00;
+    --heading-bg: #2b3a8e;
+    --heading-fg: #fff;
+    --card-bg: #fff;
+    --card-border: #d8d8d0;
+    --toc-bg: #f4f3ee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans 3', 'Helvetica Neue', sans-serif;
+  }
+
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 2rem;
+    margin-bottom: 2rem;
+    background: var(--heading-bg);
+    color: var(--heading-fg);
+    border-radius: 8px;
+  }
+  header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
+  header p { font-size: 1.1rem; opacity: 0.9; font-family: 'Crimson Pro', serif; }
+
+  nav.toc {
+    background: var(--toc-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  nav.toc h2 { font-size: 1.1rem; margin-bottom: 0.6rem; color: var(--accent); }
+  nav.toc ol { padding-left: 1.3rem; }
+  nav.toc li { margin-bottom: 0.25rem; font-size: 0.95rem; font-family: 'Source Sans 3', sans-serif; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  section { margin-bottom: 2.5rem; }
+
+  h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--heading-fg);
+    background: var(--heading-bg);
+    padding: 0.55rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 1.5rem 0 0.6rem;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.2rem;
+    display: inline-block;
+  }
+
+  p { margin-bottom: 0.9rem; }
+
+  .math-block {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+
+  .bvp-system {
+    background: var(--card-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+
+  .annotation {
+    background: var(--annot-bg);
+    border: 2px dashed var(--annot-border);
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin: 0.8rem 0;
+    font-style: italic;
+    color: var(--annot);
+    font-size: 0.95rem;
+    position: relative;
+  }
+  .annotation::before {
+    content: '✏️ Annotation:';
+    font-weight: 600;
+    font-style: normal;
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .annotation.blue {
+    background: #eef3fd;
+    border-color: #7fa8e0;
+    color: var(--blue-annot);
+  }
+  .annotation.blue::before { color: var(--blue-annot); }
+  .annotation.red {
+    background: #fdf0ef;
+    border-color: #e08a7f;
+    color: var(--accent2);
+  }
+  .annotation.red::before { color: var(--accent2); }
+  .annotation.green {
+    background: #effbf0;
+    border-color: #7fc08a;
+    color: var(--green-annot);
+  }
+  .annotation.green::before { color: var(--green-annot); }
+  .annotation.orange {
+    background: #fef5ec;
+    border-color: #e0a87f;
+    color: var(--orange-annot);
+  }
+  .annotation.orange::before { color: var(--orange-annot); }
+
+  .definition, .theorem, .remark {
+    background: var(--card-bg);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+  .definition { border-left: 4px solid #2e7d32; }
+  .theorem { border-left: 4px solid var(--accent2); }
+  .remark { border-left: 4px solid var(--orange-annot); }
+  .definition strong, .theorem strong, .remark strong {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+  }
+
+  .slide-ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #999;
+    float: right;
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--card-border);
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 17px; padding: 1rem; }
+    header h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Math 412</h1>
+  <p>Section 2.5: Well-Posedness for Laplace's Equation (Maximum Principle) and Heat Equation (Energy Method)</p>
+</header>
+
+<nav class="toc" aria-label="Table of Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#sec-max-principle">Maximum Principle</a></li>
+    <li><a href="#sec-wellposed-laplace">BVP with Prescribed Value Is Well-Posed for Laplace's Equation</a></li>
+    <li><a href="#sec-existence">Existence</a></li>
+    <li><a href="#sec-other-data">Other Kinds of Data: Solvability Conditions &amp; Nonuniqueness</a></li>
+    <li><a href="#sec-neumann">Laplace BVP with Prescribed Normal Derivative</a></li>
+    <li><a href="#sec-bc-types">Boundary Data Types</a></li>
+    <li><a href="#sec-fredholm">Fredholm Theory Connection</a></li>
+    <li><a href="#sec-energy">Energy Arguments for Heat Equation Well-Posedness</a></li>
+    <li><a href="#sec-uniqueness-heat">Uniqueness &amp; Continuous Dependence for Heat Equation IBVP</a></li>
+    <li><a href="#sec-qualitative">Power of Qualitative Methods</a></li>
+    <li><a href="#sec-plan">Plan for Rest of Class</a></li>
+  </ol>
+</nav>
+
+<!-- ======================================================== -->
+<section id="sec-max-principle">
+  <h2>1. Maximum Principle</h2>
+  <span class="slide-ref">Slide 2</span>
+
+  <p>Suppose \(u\) solves Laplace's equation on the interior of some closed, bounded region \(R\).</p>
+
+  <p>The <em>extreme value theorem</em> states that continuous functions on closed, bounded (<em>compact</em>) domains must attain absolute maximum values somewhere in the domain.</p>
+
+  <div class="annotation red">
+    M230 approach to finding absolute max/min of \(f(x,y)\) on closed, bounded region \(R\):
+    <br>1) Look at critical points inside \(R\) where \(\nabla f = 0\).
+    <br>2) Compare with max/min on the boundary.
+  </div>
+
+  <p>Since solutions to Laplace's equation cannot have strict local maxima or minima in the interior (as shown in the previous lecture), the absolute maximum must occur on the boundary:</p>
+
+  <div class="theorem">
+    <strong>Maximum Principle.</strong>
+    \[
+    \max_{(x,y)\in R} u(x,y) = \max_{(x,y)\text{ on boundary}} u(x,y).
+    \]
+    We can similarly establish a <strong>minimum principle</strong>.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-wellposed-laplace">
+  <h2>2. BVP with Prescribed Value Is Well-Posed for Laplace's Equation</h2>
+  <span class="slide-ref">Slides 3–4</span>
+
+  <p>We consider the Dirichlet BVP:</p>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \nabla^2 u = 0 & (x,y) \in R \\[6pt]
+    u(x,y) = f(x,y) & (x,y) \text{ on boundary}
+    \end{cases}
+    \]
+  </div>
+
+  <h3>Uniqueness</h3>
+
+  <p>Suppose \(u_1 \not\equiv u_2\) are two solutions. Then \(w := u_1 - u_2\) is a nontrivial solution with <strong>homogeneous</strong> boundary data.</p>
+
+  <div class="annotation">
+    \(\nabla^2 w = 0\) and \(w = f - f = 0\) on the boundary.
+  </div>
+
+  <p>However, the maximum and minimum principles guarantee that for any \((x,y) \in R\):</p>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    0 = \min_{(x,y)\text{ on bdry}}\bigl(u_1(x,y) - u_2(x,y)\bigr) \;\le\; \bigl(u_1(x,y) - u_2(x,y)\bigr) \;\le\; \max_{(x,y)\text{ on bdry}}\bigl(u_1(x,y) - u_2(x,y)\bigr) = 0,
+    \]
+  </div>
+
+  <div class="annotation red">
+    The left inequality uses the <strong>minimum principle</strong>; the right uses the <strong>maximum principle</strong>. Since the boundary data is zero, both the max and min on the boundary are zero.
+  </div>
+
+  <p>so \(u_1 - u_2 \equiv 0\), i.e., \(u_1 \equiv u_2\). Contradiction — hence the solution is unique.</p>
+
+  <h3>Continuous dependence</h3>
+
+  <p>Let \(u_1\) solve the problem with data \(f_1\), and \(u_2\) solve with data \(f_2\). The maximum principle applied to \((u_1 - u_2)\) with data \((f_1 - f_2)\) asserts:</p>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    \max_{(x,y)\in R}\bigl|u_1(x,y) - u_2(x,y)\bigr| \;\le\; \max_{(x,y)\text{ on boundary}}\bigl|f_1(x,y) - f_2(x,y)\bigr|,
+    \]
+  </div>
+
+  <div class="annotation">
+    This uses both the max principle and the min principle applied to \(|u_1 - u_2|\). The max of \(|u_1-u_2|\) over the whole region is bounded by the max of \(|u_1-u_2|\) on the boundary.
+  </div>
+
+  <p>so <strong>small changes in data cause small changes in solutions!</strong></p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-existence">
+  <h2>3. Existence</h2>
+  <span class="slide-ref">Slide 5</span>
+
+  <p>We've shown how to construct solutions for <strong>rectangles</strong> and <strong>disks</strong> using separation of variables.</p>
+
+  <p>A similar argument to the disk can be done for the <strong>unbounded region outside the disk</strong>: choose \(r^{-n}\) solutions to enforce boundedness as \(r \to \infty\). This has interesting applications to irrotational incompressible fluid flow.</p>
+
+  <div class="annotation">
+    For the <strong>annulus</strong> (homework), use both \(r^{+n}\) and \(r^{-n}\) — you have "twice as many" coefficients to solve for, but there will be boundary data on two circles.
+  </div>
+
+  <p>Existence for more complicated domains can be addressed by a variety of constructive and nonconstructive methods: conformal maps, method of images, Green's functions, etc. — essentially anything used to construct gravitational/electrical potentials and potential flows.</p>
+
+  <div class="annotation green">
+    See Ch. 9 for Green's functions and related methods.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-other-data">
+  <h2>4. Other Kinds of Data: Solvability Conditions &amp; Nonuniqueness</h2>
+  <span class="slide-ref">Slide 6</span>
+
+  <p>For the heat equation, we've discussed three types of boundary conditions: <em>prescribed temperature</em>, <em>prescribed heat flux</em>, and <em>Newton's law of cooling</em> (a linear combination of the first two).</p>
+
+  <div class="annotation">
+    Recall: heat flux \(\vec{\phi} = -K_0 \nabla u\), so prescribing flux means prescribing \(\frac{\partial u}{\partial x}\) at the boundary. Newton's law of cooling is a "convective" BC (constant temperature environment).
+  </div>
+
+  <div class="theorem">
+    <strong>Easy 1D Heat Equation Fact.</strong> The steady-state problem
+    \[
+    \pdd{u}{x} = 0, \qquad \pd{u}{x}(0) = a, \qquad \pd{u}{x}(L) = b
+    \]
+    has steady-state solutions <strong>if and only if</strong> \(a = b\). In that case, they are of the form \(u(x) = ax + c\), where \(c\) is any constant.
+  </div>
+
+  <div class="annotation red">
+    At steady state, \(u(x,t) = u(x)\) (no time dependence), so \(\frac{\partial u}{\partial t} = 0\) and the PDE becomes \(u'' = 0\).
+  </div>
+
+  <div class="annotation">
+    Physical reasoning: define the total heat energy \(E(t) = \int_0^L u(x,t)\,dx\). Then 
+    \(E'(t) = \int_0^L \frac{\partial u}{\partial t}\,dx = \int_0^L k\frac{\partial^2 u}{\partial x^2}\,dx = k\bigl[\frac{\partial u}{\partial x}\bigr]_0^L = k(b - a)\).
+    So \(E'(t) \equiv 0 \iff a = b\). This is the <strong>"solvability condition"</strong> for the 1D prescribed-derivative Laplace equation.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-neumann">
+  <h2>5. Laplace BVP with Prescribed Normal Derivative</h2>
+  <span class="slide-ref">Slide 7</span>
+
+  <p>The analog of "prescribed heat flux" for multiple space dimensions is the <strong>Neumann problem</strong>:</p>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \nabla^2 u = 0 & (x,y) \in R \\[6pt]
+    \nabla u \cdot \hat{n}\,\Big|_{(x,y)} = f(x,y) & (x,y) \text{ on boundary}
+    \end{cases}
+    \]
+  </div>
+
+  <div class="annotation red">
+    \(D_{\hat{n}} u = \nabla u \cdot \hat{n}\) is the rate of heat leaving the region at each boundary point. Here \(\hat{n}\) is the <strong>outward unit normal vector</strong> of the boundary.
+  </div>
+
+  <div class="annotation">
+    Steady-state solution ⇒ total heat energy in \(R\) remains constant. So net heat flux across boundary must be zero.
+  </div>
+
+  <p>Since the 2D divergence theorem ("Green's theorem for flux line integrals") states:</p>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    0 = \iint_R \nabla^2 u\,dA = \iint_R \nabla\cdot(\nabla u)\,dA = \oint_{\text{boundary}} \nabla u \cdot \hat{n}\,ds = \oint_{\text{boundary}} f\,ds,
+    \]
+  </div>
+
+  <div class="annotation blue">
+    Chain of equalities: (1) \(\nabla^2 u = 0\) by the PDE; (2) \(\nabla^2 u = \nabla \cdot (\nabla u)\) — definition of Laplacian; (3) 2D divergence theorem; (4) boundary condition substitution.
+  </div>
+
+  <p>we only have steady-state solutions if the <strong>"net prescribed flux" is zero</strong>.</p>
+
+  <div class="annotation">
+    On a rectangle, the outward normal on the boundary sides gives: \(\frac{\partial u}{\partial y}\) on top/bottom, \(\frac{\partial u}{\partial x}\) on left/right (with appropriate signs). The divergence theorem relates the "work" line integral \(\oint \vec{F}\cdot d\vec{r}\) (tangent direction along \(C\)) to the flux integral.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-bc-types">
+  <h2>6. Boundary Data Types</h2>
+  <span class="slide-ref">Slide 8</span>
+
+  <div class="definition">
+    <strong>Boundary condition terminology (for heat/Laplace equations):</strong>
+    <p style="margin:0.6rem 0 0.3rem;">
+      <strong>Type 1 — Dirichlet data:</strong> Prescribed value. <span style="color:var(--annot);">("prescribed temperature")</span>
+    </p>
+    <p style="margin:0.3rem 0;">
+      <strong>Type 2 — Neumann data:</strong> Prescribed normal derivative. <span style="color:var(--annot);">("prescribed flux")</span>
+    </p>
+    <p style="margin:0.3rem 0;">
+      <strong>Type 3 — Robin data:</strong> A linear combination of both. <span style="color:var(--annot);">(Newton's law of cooling)</span>
+    </p>
+    <p style="margin:0.3rem 0;">
+      <strong>Cauchy data:</strong> Initial conditions.
+    </p>
+  </div>
+
+  <div class="theorem">
+    <strong>Fact (Neumann BVP).</strong> Provided
+    \[
+    \oint_{\text{boundary}} f\,ds = 0 \qquad\textbf{(compatibility/solvability condition)},
+    \]
+    the Neumann problem
+    \[
+    \begin{cases}
+    \nabla^2 u = 0 & (x,y) \in R \\
+    \nabla u \cdot \hat{n}\big|_{(x,y)} = f(x,y) & (x,y) \text{ on boundary}
+    \end{cases}
+    \]
+    has a <strong>one-parameter family of solutions</strong> indexed by an additive constant.
+  </div>
+
+  <div class="annotation">
+    Net heat energy entering/leaving \(R\) must be zero — that's the solvability condition. If \(u(x,y)\) solves the Neumann BVP, so does \(u + C\) for any constant \(C\)! (Since \(\nabla(u+C) = \nabla u\) and \(\nabla^2(u+C) = \nabla^2 u = 0\).)
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-fredholm">
+  <h2>7. Fredholm Theory Connection</h2>
+  <span class="slide-ref">Slide 9</span>
+
+  <p>There is a deep connection between having a <strong>solvability condition</strong> and <strong>nonuniqueness</strong> of the homogeneous problem. This is analogous to the concepts of free variables/ranges and kernels from Math 220 (linear algebra).</p>
+
+  <p>In this Laplace BVP context, the infinite-dimensional linear operator is <em>Fredholm</em> (infinite-dimensional linear algebra / functional analysis) — which means it behaves similarly to finite-dimensional linear operators (Math 220, 441, 436). See Section 9.4 for more.</p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-energy">
+  <h2>8. Energy Arguments for Heat Equation Well-Posedness</h2>
+  <span class="slide-ref">Slides 10–11</span>
+
+  <p>There are mean value and maximum principles for the heat equation that can also establish uniqueness and well-posedness, but they are more difficult to establish than the analogs for Laplace's equation.</p>
+
+  <p>Instead we use a (mathematical) <strong>energy method</strong>. Often these "mathematical energies" coincide with physical energies, but they are a widely applicable technique in PDE.</p>
+
+  <div class="annotation">
+    Setting: \(\frac{\partial u}{\partial t} = k\frac{\partial^2 u}{\partial x^2}\), \(t > 0\), \(0 < x < L\), with homogeneous boundary conditions (any column on the reference sheet).
+  </div>
+
+  <h3>The energy functional</h3>
+
+  <p>Assume \(u(x,t)\) solves the heat equation with <strong>homogeneous</strong> boundary conditions (zero temperature ends, insulated ends, or periodic). Define:</p>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    E(t) := \frac{1}{2}\int_0^L u(x,t)^2\,dx \;\ge\; 0, \qquad\text{with } E = 0 \iff u(\cdot,t) \equiv 0.
+    \]
+  </div>
+
+  <div class="annotation">
+    \(E(t)\) is proportional to the square of the \(L^2\) norm of \(u(x,t)\). It is <strong>"positive definite"</strong> (zero only when \(u \equiv 0\)) — this is the <strong>"coercive"</strong> requirement of norms.
+  </div>
+
+  <h3>Computing \(E'(t)\)</h3>
+
+  <div class="math-block">
+    \[
+    \begin{aligned}
+    E'(t) &= \int_0^L u(x,t)\,\pd{u}{t}(x,t)\,dx \\[8pt]
+    &\stackrel{\text{PDE}}{=} k\int_0^L u(x,t)\,\pdd{u}{x}(x,t)\,dx \\[8pt]
+    &\stackrel{\text{int. by parts}}{=} k\,u(x,t)\,\pd{u}{x}(x,t)\bigg|_0^L - k\int_0^L \left(\pd{u}{x}\right)^2 dx \\[8pt]
+    &\le 0.
+    \end{aligned}
+    \]
+  </div>
+
+  <div class="annotation red">
+    Integration by parts: \(\mathcal{U} = u\), \(d\mathcal{V} = \frac{\partial^2 u}{\partial x^2}\,dx\), so \(d\mathcal{U} = \frac{\partial u}{\partial x}\,dx\) and \(\mathcal{V} = \frac{\partial u}{\partial x}\).
+  </div>
+
+  <div class="annotation blue">
+    The boundary term \(k\,u\,\frac{\partial u}{\partial x}\big|_0^L = 0\) for all three types of homogeneous BCs:
+    <br>• Zero temperature: \(u(0,t) = u(L,t) = 0\).
+    <br>• Insulated: \(\frac{\partial u}{\partial x}(0,t) = \frac{\partial u}{\partial x}(L,t) = 0\).
+    <br>• Periodic: \(u(0,t) = u(L,t)\) and \(\frac{\partial u}{\partial x}(0,t) = \frac{\partial u}{\partial x}(L,t)\), so boundary terms cancel.
+    <br><br>
+    The remaining integral \(-k\int_0^L (\frac{\partial u}{\partial x})^2\,dx \le 0\) since the integrand is non-negative and \(k > 0\).
+  </div>
+
+  <p>Therefore:</p>
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    \boxed{\;E(t) \le E(0).\;}
+    \]
+  </div>
+
+  <p>The energy is <strong>non-increasing</strong> in time.</p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-uniqueness-heat">
+  <h2>9. Uniqueness &amp; Continuous Dependence for Heat Equation IBVP</h2>
+  <span class="slide-ref">Slides 12–14</span>
+
+  <p>Consider the IBVP with inhomogeneous (prescribed temperature) boundary conditions:</p>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \pd{u}{t} = k\,\pdd{u}{x}, & t > 0,\; 0 < x < L \\[6pt]
+    u(0,t) = g(t), & t > 0 \\[4pt]
+    u(L,t) = h(t), & t > 0 \\[4pt]
+    u(x,0) = f(x), & 0 < x < L
+    \end{cases}
+    \]
+  </div>
+
+  <div class="annotation">
+    Prescribed temperature BCs (Dirichlet type, possibly time-dependent).
+  </div>
+
+  <p>This problem has <strong>uniqueness</strong> — at most one solution exists.</p>
+
+  <h3>Proof of uniqueness</h3>
+
+  <p>Let \(u_1 \not\equiv u_2\) be two solutions, and define \(w := u_1 - u_2\). Then \(w\) solves the heat equation (the PDE is linear homogeneous) with <strong>homogeneous boundary AND initial conditions</strong>:</p>
+
+  <div class="annotation green">
+    \(w\) satisfies: \(\frac{\partial w}{\partial t} = k\frac{\partial^2 w}{\partial x^2}\), with \(w(0,t) = w(L,t) = 0\) and \(w(x,0) = 0\).
+  </div>
+
+  <p>Apply the energy estimate:</p>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    0 \;\le\; E(t) \;\le\; E(0) = \frac{1}{2}\int_0^L w(x,0)^2\,dx = 0,
+    \]
+  </div>
+
+  <div class="annotation">
+    <strong>Positive definiteness:</strong> \(E(t) \ge 0\).
+    <br><strong>Energy decay:</strong> \(E(t) \le E(0)\).
+    <br>Combined: \(E(t) = 0\) for all \(t\), so \(w(\cdot,t) \equiv 0\) for all \(t\), hence \(w \equiv 0\), i.e., \(u_1 \equiv u_2\). Contradiction!
+  </div>
+
+  <h3>Continuous dependence on initial data</h3>
+
+  <p>Let \(u_1\) solve with IC \(f_1\), and \(u_2\) solve with IC \(f_2\) (same BCs). Then \(E(t) \le E(0)\) applied to \(w = u_1 - u_2\) gives:</p>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    \int_0^L \bigl(u_1(x,t) - u_2(x,t)\bigr)^2\,dx \;\le\; \int_0^L \bigl(f_1(x) - f_2(x)\bigr)^2\,dx.
+    \]
+  </div>
+
+  <p>For initial conditions "close with respect to the \(L^2\) distance between functions," the solutions for all \(t > 0\) are also close with respect to the same notion of distance.</p>
+
+  <div class="remark">
+    <strong>Comparison of distance notions.</strong> For Laplace's equation, the continuous dependence estimate was:
+    \[
+    \max_{(x,y)\in R}\bigl|u_1 - u_2\bigr| \;\le\; \max_{(x,y)\text{ on bdry}}\bigl|f_1 - f_2\bigr|,
+    \]
+    which is the <strong>"uniform"</strong> or \(L^\infty\) notion of distance. For the heat equation, the energy method gives the analogous statement with respect to the \(L^2\) distance.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-qualitative">
+  <h2>10. Power of Qualitative Methods</h2>
+  <span class="slide-ref">Slide 15</span>
+
+  <p>Often <em>energy methods</em> involve equations/inequalities between \(E'(t)\) and \(E(t)\), which can be used to argue uniqueness and continuous dependence. In addition, <em>a priori estimates</em>/energy estimates for constructed approximate solutions can often be used to argue <strong>existence</strong>.</p>
+
+  <div class="remark">
+    <strong>Key insight:</strong> Notice how powerful these qualitative methods (mean value property, maximum principle, energy methods) are for establishing powerful conclusions <strong>without working with solution formulas!</strong>
+    <br><br>
+    Since solution formulas are really only readily available for constant-coefficient linear problems, these qualitative techniques are <strong>even more important</strong> for variable-coefficient and nonlinear PDE.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-plan">
+  <h2>11. Plan for Rest of Class</h2>
+  <span class="slide-ref">Slide 16</span>
+
+  <p><strong>Chapter 3:</strong> Fourier Series Theory — see Stein &amp; Shakarchi, <em>Princeton Lectures in Analysis</em> Volume 1 for proofs from scratch.</p>
+
+  <p><strong>Chapter 4:</strong> Wave equation (prototype hyperbolic PDE) solved with Fourier series methods.</p>
+
+  <p><strong>Chapter 10:</strong> Fourier transform methods ("continuous Fourier series" involving integrals) for unbounded domains.</p>
+
+  <p><strong>Chapter 12:</strong> Method of Characteristics for Linear and Quasilinear Wave Equations — finite propagation speed, "cones of dependence/influence," shock waves, traffic model, etc.</p>
+</section>
+
+<footer>
+  Math 412 — Section 2.5 Lecture Notes (Well-Posedness). Converted to accessible HTML with MathJax rendering. Annotations from in-class discussion are marked with ✏️.
+</footer>
+
+</body>
+</html>

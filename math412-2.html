@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math 412 – Fourier Coefficients, Heat Equation, Other BCs, Multiple Dimensions</title>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --bg: #faf8f4;
+      --card: #ffffff;
+      --accent: #3b4fd8;
+      --accent2: #c0392b;
+      --annot: #d63384;
+      --muted: #6c757d;
+      --border: #e2ddd5;
+      --section-bg: #3b4fd8;
+      --code-bg: #f0efeb;
+      --green: #2e7d32;
+      --green-bg: #e8f5e9;
+      --yellow-bg: #fff8e1;
+      --yellow-border: #f5c518;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Sans 3', Georgia, serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.75;
+      font-size: 17px;
+    }
+
+    header {
+      background: var(--section-bg);
+      color: #fff;
+      padding: 3.5rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 40px,
+        rgba(255,255,255,.03) 40px, rgba(255,255,255,.03) 80px
+      );
+    }
+    header h1 { font-family: 'Lora', serif; font-size: 2.4rem; font-weight: 600; position: relative; }
+    header p.subtitle { font-size: 1rem; opacity: .85; margin-top: .5rem; position: relative; }
+
+    nav {
+      background: var(--card);
+      border-bottom: 2px solid var(--border);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    nav details summary { cursor: pointer; font-weight: 600; font-size: .95rem; color: var(--accent); list-style: none; user-select: none; }
+    nav details summary::before { content: '☰  '; }
+    nav ol { margin: .75rem 0 0 1.25rem; font-size: .88rem; columns: 2; column-gap: 2rem; }
+    nav ol li { margin: .2rem 0; }
+    nav a { color: var(--accent); text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+
+    main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+    .section-header {
+      background: var(--section-bg);
+      color: #fff;
+      border-radius: 6px 6px 0 0;
+      padding: .6rem 1.2rem;
+      font-family: 'Lora', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-top: 3rem;
+      letter-spacing: .01em;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      padding: 1.6rem 1.8rem;
+    }
+
+    h3 { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 1.6rem 0 .4rem; }
+
+    p { margin-bottom: 1rem; }
+
+    .defn {
+      border-left: 4px solid var(--accent);
+      background: #f0f2ff;
+      padding: .75rem 1.1rem;
+      margin: 1.1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .defn strong { color: var(--accent); }
+
+    .eq-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 4px;
+      padding: .9rem 1.2rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    .named-box { border: 2px solid var(--accent); border-radius: 6px; margin: 1.2rem 0; overflow: hidden; }
+    .named-box .box-title { background: var(--accent); color: #fff; padding: .35rem .9rem; font-weight: 600; font-size: .9rem; letter-spacing: .04em; text-transform: uppercase; }
+    .named-box .box-body { padding: .9rem 1.1rem; background: #f5f6ff; }
+
+    .annot { color: var(--annot); font-style: italic; font-size: .9rem; }
+    .annot::before { content: '✎ '; }
+
+    .key-idea { background: var(--green-bg); border-left: 4px solid var(--green); padding: .75rem 1.1rem; border-radius: 0 4px 4px 0; margin: 1rem 0; }
+
+    .warning-box { background: var(--yellow-bg); border: 2px solid var(--yellow-border); border-radius: 6px; padding: .8rem 1.1rem; margin: 1rem 0; }
+    .warning-box strong { color: #7a5c00; }
+
+    ul.content-list { margin: .5rem 0 1rem 1.4rem; }
+    ul.content-list li { margin: .4rem 0; }
+
+    /* Proof / derivation steps */
+    .deriv {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: .9rem 1.2rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .deriv p { margin-bottom: .4rem; }
+
+    /* BC comparison table */
+    .bc-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .93rem; overflow-x: auto; display: block; }
+    .bc-table th { background: var(--section-bg); color: #fff; padding: .5rem .7rem; text-align: left; font-weight: 600; white-space: nowrap; }
+    .bc-table td { border: 1px solid var(--border); padding: .5rem .7rem; vertical-align: top; }
+    .bc-table tr:nth-child(even) td { background: #f8f8fb; }
+
+    /* Case blocks */
+    .case-block { border: 1px solid var(--border); border-radius: 6px; margin: .8rem 0; overflow: hidden; }
+    .case-block .case-title { padding: .4rem .9rem; font-weight: 600; font-size: .9rem; }
+    .case-title.pos  { background: #d4edda; color: #155724; }
+    .case-title.zero { background: #fff3cd; color: #856404; }
+    .case-title.neg  { background: #f8d7da; color: #721c24; }
+    .case-block .case-body { padding: .8rem 1rem; }
+
+    /* Vector derivative table */
+    .vd-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .93rem; }
+    .vd-table th { background: #eef0fb; color: var(--ink); font-weight: 600; padding: .45rem .7rem; border-bottom: 2px solid var(--accent); text-align: left; }
+    .vd-table td { border: 1px solid var(--border); padding: .55rem .7rem; vertical-align: top; }
+    .vd-table tr:nth-child(even) td { background: #f9faff; }
+
+    /* Analogy block */
+    .analogy { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    .analogy-item { background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px; padding: .7rem 1rem; }
+    .analogy-item .al { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .3rem; }
+    @media (max-width: 560px) { .analogy { grid-template-columns: 1fr; } }
+
+    footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 4rem; }
+
+    .btt { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--accent); color: #fff; border: none; border-radius: 50%; width: 2.8rem; height: 2.8rem; font-size: 1.2rem; cursor: pointer; box-shadow: 0 3px 12px rgba(0,0,0,.2); opacity: .8; transition: opacity .2s; }
+    .btt:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Math 412</h1>
+  <p class="subtitle">Fourier Sine Coefficients · Heat Equation Example · Other Boundary Conditions · Multiple Space Dimensions<br><small style="opacity:.7">Sections 2.4, 1.5, 2.5</small></p>
+</header>
+
+<nav>
+  <details>
+    <summary>Table of Contents</summary>
+    <ol>
+      <li><a href="#ibvp-recap">IBVP Recap &amp; General Solution</a></li>
+      <li><a href="#orthogonality">Orthogonality of Sines</a></li>
+      <li><a href="#trig-review">Trig Identities from Scratch</a></li>
+      <li><a href="#orthog-proof">Orthogonality Proofs</a></li>
+      <li><a href="#bn-derivation">Deriving the \(B_n\) Formula</a></li>
+      <li><a href="#vector-analogy">Vector Space Analogy</a></li>
+      <li><a href="#inner-product">Functions as Vectors</a></li>
+      <li><a href="#experiment">Worked Example: \(u(x,0)=100\)</a></li>
+      <li><a href="#insulated">Insulated Ends</a></li>
+      <li><a href="#periodic">Periodic / Ring BCs</a></li>
+      <li><a href="#bvp-table">Summary Table (Textbook 2.4.1)</a></li>
+      <li><a href="#multid">Heat Equation in Multiple Dimensions</a></li>
+      <li><a href="#divergence">Divergence Theorem</a></li>
+      <li><a href="#vector-deriv">Vector Derivative Review</a></li>
+      <li><a href="#multid-pde">Multi-D Heat PDE &amp; Laplacian</a></li>
+      <li><a href="#laplace">Laplace's &amp; Poisson's Equations</a></li>
+      <li><a href="#gauss">Connection to Gauss's Law</a></li>
+    </ol>
+  </details>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="ibvp-recap">Heat Equation: IBVP Recap &amp; General Solution</div>
+<div class="card">
+  <p>We consider the IBVP with no sources and zero-temperature ends:</p>
+  <div class="named-box">
+    <div class="box-title">IBVP</div>
+    <div class="box-body">
+      \[
+        \begin{cases}
+          \text{PDE:} & \displaystyle\frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}, \quad 0 < x < L,\; t > 0,\\[6pt]
+          \text{BC:}  & u(0,t) = u(L,t) = 0, \quad t > 0,\\[4pt]
+          \text{IC:}  & u(x,0) = f(x), \quad 0 \le x \le L.
+        \end{cases}
+      \]
+    </div>
+  </div>
+  <p>Writing the initial temperature as its Fourier sine series on \([0,L]\):</p>
+  \[
+    u(x,0) = \sum_{n=1}^{\infty} B_n \sin\!\left(\frac{n\pi x}{L}\right),
+    \quad B_n = \frac{2}{L}\int_0^L u(x,0)\sin\!\left(\frac{n\pi x}{L}\right)dx.
+  \]
+  <p>Then, by the eigenvalue/eigenfunction analysis and the principle of superposition, the solution is:</p>
+  <div class="named-box">
+    <div class="box-title">General Solution</div>
+    <div class="box-body">
+      \[
+        u(x,t) = \sum_{n=1}^{\infty} B_n \sin\!\left(\frac{n\pi x}{L}\right) e^{-k(n\pi/L)^2 t}.
+      \]
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="orthogonality">Where Did the \(B_n\) Formula Come From? — Orthogonality of Sines</div>
+<div class="card">
+  <div class="named-box">
+    <div class="box-title">Orthogonality of Sines (for integers \(n, m \ge 1\))</div>
+    <div class="box-body">
+      \[
+        \int_0^L \sin\frac{n\pi x}{L}\,\sin\frac{m\pi x}{L}\,dx
+        = \begin{cases} 0 & m \ne n,\\ \dfrac{L}{2} & m = n. \end{cases}
+      \]
+      <p style="margin-top:.5rem; font-size:.9rem;">The value \(L/2\) is the <em>half-interval length</em>.</p>
+    </div>
+  </div>
+  <p>This result is the key to isolating individual \(B_n\) coefficients. It follows from Euler's identity \(e^{ix} = \cos x + i\sin x\).</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="trig-review">Trig Identities "From Scratch" via Euler's Formula</div>
+<div class="card">
+  <p>Using \(e^{(a+b)i} = e^{ai}e^{bi}\) and Euler's identity:</p>
+  \[
+    \cos(a+b) + i\sin(a+b) = (\cos a + i\sin a)(\cos b + i\sin b).
+  \]
+  <p>Expanding and matching real and imaginary parts:</p>
+  \[
+    \begin{cases}
+      \cos(a+b) = \cos a\cos b - \sin a\sin b,\\
+      \sin(a+b) = \sin a\cos b + \cos a\sin b.
+    \end{cases}
+  \]
+  <p>Since cosine is even and sine is odd:</p>
+  \[
+    \begin{cases}
+      \cos(a-b) = \cos a\cos b + \sin a\sin b,\\
+      \sin(a-b) = \sin a\cos b - \cos a\sin b.
+    \end{cases}
+  \]
+  <p>Subtracting gives the <strong>product-to-sum identity</strong>:</p>
+  \[
+    \sin a\sin b = \tfrac{1}{2}[\cos(a-b) - \cos(a+b)].
+  \]
+  <p>And from \(\cos(2x) = \cos^2 x - \sin^2 x\):</p>
+  \[
+    \cos(2x) = 1 - 2\sin^2 x \implies \sin^2 x = \tfrac{1}{2} - \tfrac{\cos(2x)}{2}.
+  \]
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="orthog-proof">Orthogonality Proofs</div>
+<div class="card">
+  <h3>Case \(n \ne m\)</h3>
+  <p>Apply the product-to-sum identity:</p>
+  \[
+    \int_0^L \sin\frac{n\pi x}{L}\sin\frac{m\pi x}{L}\,dx
+    = \frac{1}{2}\int_0^L\!\left[\cos\frac{(n-m)\pi x}{L} - \cos\frac{(n+m)\pi x}{L}\right]dx.
+  \]
+  <p>Integrating (requires \(n \ne m\) so denominators are non-zero):</p>
+  \[
+    = \frac{L}{2\pi}\!\left(\frac{\sin\frac{(n-m)\pi x}{L}}{n-m} - \frac{\sin\frac{(n+m)\pi x}{L}}{n+m}\right)\!\Bigg|_0^L
+    = \frac{L}{2\pi}\!\left(\frac{\sin(n-m)\pi}{n-m} - \frac{\sin(n+m)\pi}{n+m}\right) = 0,
+  \]
+  <p>since \(\sin(k\pi) = 0\) for any integer \(k\).</p>
+
+  <h3>Case \(n = m\)</h3>
+  <p>Use the half-angle identity \(\sin^2\theta = \frac{1}{2} - \frac{\cos 2\theta}{2}\):</p>
+  \[
+    \int_0^L \sin^2\!\frac{n\pi x}{L}\,dx
+    = \int_0^L\!\left(\frac{1}{2} - \frac{\cos\frac{2n\pi x}{L}}{2}\right)dx
+    = \left(\frac{x}{2} - \frac{L}{4n\pi}\sin\frac{2n\pi x}{L}\right)\!\Bigg|_0^L
+    = \frac{L}{2}.
+  \]
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="bn-derivation">Deriving the \(B_n\) Formula</div>
+<div class="card">
+  <p>Assume \(\displaystyle f(x) = \sum_{n=1}^{\infty} B_n \sin\frac{n\pi x}{L}\). To find \(B_m\):</p>
+
+  <div class="deriv">
+    <p><strong>Step 1.</strong> Multiply both sides by \(\sin\dfrac{m\pi x}{L}\):</p>
+    \[ f(x)\sin\frac{m\pi x}{L} = \sum_{n=1}^{\infty} B_n \sin\frac{n\pi x}{L}\sin\frac{m\pi x}{L}. \]
+    <p><strong>Step 2.</strong> Integrate from \(0\) to \(L\):</p>
+    \[ \int_0^L f(x)\sin\frac{m\pi x}{L}\,dx = \int_0^L\sum_{n=1}^{\infty} B_n \sin\frac{n\pi x}{L}\sin\frac{m\pi x}{L}\,dx. \]
+    <p><strong>Step 3.</strong> By orthogonality, only the \(n = m\) term survives:</p>
+    \[ \int_0^L f(x)\sin\frac{m\pi x}{L}\,dx = B_m\int_0^L\sin^2\frac{m\pi x}{L}\,dx = B_m\cdot\frac{L}{2}. \]
+    <p><strong>Step 4.</strong> Solve for \(B_m\):</p>
+    \[
+      B_m = \frac{\displaystyle\int_0^L f(x)\sin\dfrac{m\pi x}{L}\,dx}{\displaystyle\int_0^L\sin^2\dfrac{m\pi x}{L}\,dx}
+           = \frac{2}{L}\int_0^L f(x)\sin\frac{m\pi x}{L}\,dx.
+    \]
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="vector-analogy">The Vector Analogy</div>
+<div class="card">
+  <p>The Fourier coefficient formula is exactly the analogue of decomposing a vector in an orthogonal basis.</p>
+
+  <div class="analogy">
+    <div class="analogy-item">
+      <div class="al">Finite-dimensional vectors</div>
+      <p>Orthogonal basis \(\mathbf{b}_1, \mathbf{b}_2, \mathbf{b}_3\) with \(\mathbf{b}_n\cdot\mathbf{b}_m = 0\) for \(n\ne m\), \(\|\mathbf{b}_m\|^2\) for \(n=m\).</p>
+      \[ \mathbf{v} = v_1\mathbf{b}_1+v_2\mathbf{b}_2+v_3\mathbf{b}_3 \implies v_m = \frac{\mathbf{v}\cdot\mathbf{b}_m}{\|\mathbf{b}_m\|^2}. \]
+    </div>
+    <div class="analogy-item">
+      <div class="al">Functions on \([0,L]\)</div>
+      <p>Orthogonal "basis" \(\sin\!\left(\frac{n\pi x}{L}\right)\) with inner product \(\langle f,g\rangle = \int_0^L fg\,dx\).</p>
+      \[ f(x) = \sum_{n=1}^\infty B_n\sin\frac{n\pi x}{L} \implies B_m = \frac{\langle f,\sin\frac{m\pi x}{L}\rangle}{\|\sin\frac{m\pi x}{L}\|^2}. \]
+    </div>
+  </div>
+  <p>\(v_1, v_2, v_3\) are the <em>coordinates</em> of \(\mathbf{v}\) relative to the basis \(\{\mathbf{b}_1,\mathbf{b}_2,\mathbf{b}_3\}\). Similarly, \(B_n\) are the "coordinates" of \(f\) relative to the basis of eigenfunctions.</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="inner-product">Functions as Vectors — Inner Products on Function Spaces</div>
+<div class="card">
+  <div class="defn">
+    <strong>Orthogonality of functions on \([0,L]\):</strong> Two functions \(f,g\) are <em>orthogonal</em> if
+    \[\int_0^L f(x)\,g(x)\,dx = 0.\]
+  </div>
+  <p>We define the <strong>inner product</strong> (also called the dot product) of functions on \([0,L]\) by:</p>
+  \[
+    \langle f, g\rangle = \langle f(x)\,|\,g(x)\rangle := \int_0^L f(x)\,g(x)\,dx.
+  \]
+  <p>So orthogonal functions satisfy \(f \perp g\), just like orthogonal vectors satisfy \(\mathbf{u}\cdot\mathbf{v}=0\).</p>
+  <p class="annot">This is a scalar-valued, symmetric, bilinear map — takes two "vectors" (functions), outputs a scalar. In quantum mechanics this is called bra-ket notation: \(\langle f | g\rangle\).</p>
+  <p>In ODE/linear algebra, solution spaces were <em>finite-dimensional</em>. For PDEs, we have <em>infinite-dimensional</em> function spaces — the realm of Fourier series and functional analysis (infinite-dimensional Hilbert spaces).</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="experiment">Worked Example: \(u(x,0) = 100\)</div>
+<div class="card">
+  <p>A physically natural experiment: boil a rod in water (so \(u = 100\,^\circ\text{C}\) everywhere at \(t=0\)), then at \(t=0\) submerge the ends in an ice bath.</p>
+  <div class="named-box">
+    <div class="box-title">IBVP</div>
+    <div class="box-body">
+      \[
+        \begin{cases}
+          \dfrac{\partial u}{\partial t} = k\,\dfrac{\partial^2 u}{\partial x^2}, \quad 0 < x < L,\; t > 0,\\[6pt]
+          u(0,t) = 0, \quad u(L,t) = 0, \quad t > 0,\\[4pt]
+          u(x,0) = 100, \quad 0 < x < L.
+        \end{cases}
+      \]
+    </div>
+  </div>
+
+  <h3>Computing the Fourier Coefficients</h3>
+  \[
+    B_n = \frac{2}{L}\int_0^L 100\sin\frac{n\pi x}{L}\,dx
+        = -\frac{200}{n\pi}\cos\frac{n\pi x}{L}\Bigg|_0^L
+        = \frac{200}{n\pi}(1 - \cos(n\pi)).
+  \]
+  <p>Since \(\cos(n\pi) = (-1)^n\) for integer \(n\):</p>
+  \[
+    B_n = \begin{cases} \dfrac{400}{n\pi} & n \text{ odd}, \\ 0 & n \text{ even}. \end{cases}
+  \]
+
+  <h3>Solution</h3>
+  <p>Reindexing to sum over odd \(n\) only (writing \(n = 2m+1\), \(m = 0,1,2,\ldots\)):</p>
+  <div class="named-box">
+    <div class="box-title">Solution</div>
+    <div class="box-body">
+      \[
+        u(x,t) = \sum_{m=0}^{\infty} \frac{400}{(2m+1)\pi}\sin\!\left(\frac{(2m+1)\pi x}{L}\right)
+                 e^{-k[(2m+1)\pi/L]^2 t}.
+      \]
+    </div>
+  </div>
+  <p class="annot">Interactive visualization at <a href="https://www.desmos.com/calculator/aruawtcp9w" target="_blank" rel="noopener">desmos.com/calculator/aruawtcp9w</a>. Note that the zero-temp BC means \(\phi(0) = \phi(L) = 0\) in the spatial eigenfunction, i.e. \(u(0,t)=u(L,t)=0\) for all \(t > 0\).</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="insulated">Insulated Ends (§2.4)</div>
+<div class="card">
+  <p>Insulated ends means <em>no heat flux</em> at \(x=0\) or \(x=L\). By Fourier's law \(\phi = -K_0\,\partial u/\partial x\), this means:</p>
+  <div class="named-box">
+    <div class="box-title">IBVP — Insulated Ends</div>
+    <div class="box-body">
+      \[
+        \begin{cases}
+          \text{PDE:} & \displaystyle\frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}, \quad 0 < x < L,\; t > 0,\\[6pt]
+          \text{BC:}  & \dfrac{\partial u}{\partial x}(0,t) = \dfrac{\partial u}{\partial x}(L,t) = 0, \quad t > 0,\\[6pt]
+          \text{IC:}  & u(x,0) = f(x).
+        \end{cases}
+      \]
+    </div>
+  </div>
+  <p>Seeking product solutions \(u = \phi(x)G(t)\) as before gives the same time ODE \(G'=-\lambda k G\) and the spatial eigenvalue problem with <em>Neumann</em> (derivative) BCs:</p>
+  \[
+    \phi''(x) = -\lambda\,\phi(x), \qquad \phi'(0) = \phi'(L) = 0.
+  \]
+
+  <div class="case-block">
+    <div class="case-title pos">Case \(\lambda > 0\)</div>
+    <div class="case-body">
+      \[ \phi(x) = c_1\cos(\sqrt{\lambda}\,x) + c_2\sin(\sqrt{\lambda}\,x), \quad \phi'(x) = \sqrt{\lambda}\bigl(-c_1\sin(\sqrt{\lambda}\,x)+c_2\cos(\sqrt{\lambda}\,x)\bigr). \]
+      <p>BC \(\phi'(0)=0 \Rightarrow c_2 = 0\). BC \(\phi'(L)=0 \Rightarrow -c_1\sin(\sqrt{\lambda}L)=0\), so \(\sqrt{\lambda}L = n\pi\) and:</p>
+      \[ \lambda_n = \left(\frac{n\pi}{L}\right)^{\!2},\quad \phi_n(x) = \cos\!\left(\frac{n\pi x}{L}\right), \quad n = 1,2,\ldots \]
+    </div>
+  </div>
+
+  <div class="case-block">
+    <div class="case-title zero">Case \(\lambda = 0\)</div>
+    <div class="case-body">
+      <p>\(\phi'' = 0 \Rightarrow \phi(x) = c_1 + c_2 x\), so \(\phi'(x)=c_2\). BC forces \(c_2=0\), leaving \(\phi(x) = c_1 =\) constant. <strong>\(\lambda=0\) IS an eigenvalue here</strong> (unlike zero-temp ends).</p>
+      <p>For \(\lambda=0\): \(G'=0 \Rightarrow G = \text{const}\), giving the product solution \(\phi(x)G(t) = A_0\) (a constant).</p>
+    </div>
+  </div>
+
+  <div class="case-block">
+    <div class="case-title neg">Case \(\lambda < 0\)</div>
+    <div class="case-body">
+      <p>Similar analysis shows the BC force \(c_1=c_2=0\). <strong>No nontrivial solutions.</strong></p>
+    </div>
+  </div>
+
+  <h3>General Solution — Insulated Ends</h3>
+  <div class="named-box">
+    <div class="box-title">Solution</div>
+    <div class="box-body">
+      \[
+        u(x,t) = A_0 + \sum_{n=1}^{\infty} A_n\cos\!\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2 t},
+      \]
+      where the <strong>Fourier cosine coefficients</strong> are:
+      \[
+        A_0 = \frac{1}{L}\int_0^L u(x,0)\,dx, \qquad
+        A_n = \frac{2}{L}\int_0^L u(x,0)\cos\!\left(\frac{n\pi x}{L}\right)dx \quad (n \ge 1).
+      \]
+    </div>
+  </div>
+  <p class="annot">This is called the <em>Fourier cosine series</em> of \(f(x)\) on \([0,L]\).</p>
+
+  <h3>Orthogonality of Cosines on \([0,L]\)</h3>
+  \[
+    \int_0^L \cos\frac{n\pi x}{L}\cos\frac{m\pi x}{L}\,dx =
+    \begin{cases} 0 & m \ne n,\\ \dfrac{L}{2} & m = n \ne 0,\\ L & m = n = 0. \end{cases}
+  \]
+  <p>The \(m=n=0\) case gives \(L\) (the full interval length) because \(\cos(0) = 1\) and \(\int_0^L 1\,dx = L\).</p>
+
+  <div class="key-idea">
+    <strong>Physical interpretation:</strong> As \(t\to\infty\), all terms with \(n\ge 1\) decay to zero, leaving \(u\to A_0 = \frac{1}{L}\int_0^L f(x)\,dx\) — the average initial temperature. This makes physical sense: with insulated ends, no heat can escape, so the rod equilibrates at its average initial temperature.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="periodic">No Ends — Periodic Boundary Conditions (Ring)</div>
+<div class="card">
+  <p>Imagine bending the rod into a circle so the two ends are joined with "perfect thermal contact." Taking the rod to have length \(2L\) with \(-L \le x \le L\):</p>
+  <ul class="content-list">
+    <li>Temperature agrees at the join: \(u(-L,t) = u(L,t)\)</li>
+    <li>Heat flux agrees at the join: \(\dfrac{\partial u}{\partial x}(-L,t) = \dfrac{\partial u}{\partial x}(L,t)\)</li>
+  </ul>
+  <p>These are called <strong>periodic boundary conditions</strong>.</p>
+
+  <div class="named-box">
+    <div class="box-title">IBVP — Periodic BCs</div>
+    <div class="box-body">
+      \[
+        \begin{cases}
+          \text{PDE:} & \displaystyle\frac{\partial u}{\partial t} = k\,\frac{\partial^2 u}{\partial x^2}, \quad -L < x < L,\; t > 0,\\[6pt]
+          \text{BC:}  & u(-L,t) = u(L,t), \quad \dfrac{\partial u}{\partial x}(-L,t) = \dfrac{\partial u}{\partial x}(L,t), \quad t > 0,\\[6pt]
+          \text{IC:}  & u(x,0) = f(x), \quad -L \le x \le L.
+        \end{cases}
+      \]
+    </div>
+  </div>
+
+  <h3>Eigenvalue Problem with Periodic BCs (\(\lambda > 0\))</h3>
+  <p>The general solution \(\phi(x) = c_1\cos(\sqrt{\lambda}\,x)+c_2\sin(\sqrt{\lambda}\,x)\) must satisfy \(\phi(-L)=\phi(L)\) and \(\phi'(-L)=\phi'(L)\). Using cosine-even, sine-odd:</p>
+  \[
+    \begin{cases}
+      -c_2\sin(\sqrt{\lambda}L) = +c_2\sin(\sqrt{\lambda}L),\\
+      \sqrt{\lambda}\,c_1\sin(\sqrt{\lambda}L) = -\sqrt{\lambda}\,(-c_1\sin(\sqrt{\lambda}L)).
+    \end{cases}
+  \]
+  <p>Both reduce to \(c_1\sin(\sqrt{\lambda}L)=0\) and \(c_2\sin(\sqrt{\lambda}L)=0\). As long as \(\sin(\sqrt{\lambda}L)=0\), i.e. \(\lambda = (n\pi/L)^2\), there are <strong>no restrictions on \(c_1\) or \(c_2\)</strong>. So each eigenvalue has <em>two</em> linearly independent eigenfunctions:</p>
+  \[
+    \phi(x) = \cos\!\left(\frac{n\pi x}{L}\right) \quad\text{and}\quad \phi(x) = \sin\!\left(\frac{n\pi x}{L}\right), \quad n = 1, 2, \ldots
+  \]
+  <p>The \(\lambda=0\) case (\(\phi=\text{const}\)) and the \(\lambda<0\) case (no solutions) work as before.</p>
+
+  <h3>General Solution — Periodic BCs</h3>
+  <div class="named-box">
+    <div class="box-title">Solution (Full Fourier Series)</div>
+    <div class="box-body">
+      \[
+        u(x,t) = a_0 + \sum_{n=1}^{\infty} a_n\cos\!\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2 t}
+                      + \sum_{n=1}^{\infty} b_n\sin\!\left(\frac{n\pi x}{L}\right)e^{-k(n\pi/L)^2 t},
+      \]
+      where the <strong>full Fourier series coefficients</strong> of \(f(x)\) on \([-L,L]\) are:
+      \[
+        a_0 = \frac{1}{2L}\int_{-L}^{L}f(x)\,dx, \quad
+        a_m = \frac{1}{L}\int_{-L}^{L}f(x)\cos\!\left(\frac{m\pi x}{L}\right)dx, \quad
+        b_m = \frac{1}{L}\int_{-L}^{L}f(x)\sin\!\left(\frac{m\pi x}{L}\right)dx.
+      \]
+    </div>
+  </div>
+
+  <h3>Orthogonality on \([-L,L]\)</h3>
+  \[
+    \int_{-L}^{L}\cos\frac{n\pi x}{L}\cos\frac{m\pi x}{L}\,dx =
+    \begin{cases} 0 & m\ne n,\\ L & m=n\ne 0,\\ 2L & m=n=0, \end{cases}
+  \]
+  \[
+    \int_{-L}^{L}\sin\frac{n\pi x}{L}\sin\frac{m\pi x}{L}\,dx =
+    \begin{cases} 0 & m\ne n,\\ L & m=n\ne 0, \end{cases}
+  \]
+  \[
+    \int_{-L}^{L}\cos\!\left(\frac{n\pi x}{L}\right)\sin\!\left(\frac{m\pi x}{L}\right)dx = 0 \quad \text{(all } m,n\text{).}
+  \]
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="bvp-table">Summary Table — BVPs for \(\phi'' = -\lambda\phi\) (Textbook Table 2.4.1)</div>
+<div class="card">
+  <div style="overflow-x:auto;">
+  <table class="bc-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Zero-temp ends</th>
+        <th>Insulated ends</th>
+        <th>Periodic (Ring)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>BCs</strong></td>
+        <td>\(\phi(0)=0,\;\phi(L)=0\)</td>
+        <td>\(\phi'(0)=0,\;\phi'(L)=0\)</td>
+        <td>\(\phi(-L)=\phi(L),\;\phi'(-L)=\phi'(L)\)</td>
+      </tr>
+      <tr>
+        <td><strong>Eigenvalues \(\lambda_n\)</strong></td>
+        <td>\(\left(\dfrac{n\pi}{L}\right)^{\!2},\; n=1,2,3,\ldots\)</td>
+        <td>\(\left(\dfrac{n\pi}{L}\right)^{\!2},\; n=0,1,2,\ldots\)</td>
+        <td>\(\left(\dfrac{n\pi}{L}\right)^{\!2},\; n=0,1,2,\ldots\)</td>
+      </tr>
+      <tr>
+        <td><strong>Eigenfunctions</strong></td>
+        <td>\(\sin\dfrac{n\pi x}{L}\)</td>
+        <td>\(\cos\dfrac{n\pi x}{L}\)</td>
+        <td>\(\sin\dfrac{n\pi x}{L}\) <em>and</em> \(\cos\dfrac{n\pi x}{L}\)</td>
+      </tr>
+      <tr>
+        <td><strong>Series</strong></td>
+        <td>\(\displaystyle\sum_{n=1}^\infty B_n\sin\frac{n\pi x}{L}\)<br><small>"Fourier sine series on \([0,L]\)"</small></td>
+        <td>\(\displaystyle\sum_{n=0}^\infty A_n\cos\frac{n\pi x}{L}\)<br><small>"Fourier cosine series on \([0,L]\)"</small></td>
+        <td>\(\displaystyle\sum_{n=0}^\infty a_n\cos\frac{n\pi x}{L}+\sum_{n=1}^\infty b_n\sin\frac{n\pi x}{L}\)<br><small>"Full Fourier series on \([-L,L]\)"</small></td>
+      </tr>
+      <tr>
+        <td><strong>Coefficients</strong></td>
+        <td>\(B_n = \dfrac{2}{L}\displaystyle\int_0^L f\sin\dfrac{n\pi x}{L}\,dx\)</td>
+        <td>\(A_0=\dfrac{1}{L}\displaystyle\int_0^L f\,dx\)<br>\(A_n=\dfrac{2}{L}\displaystyle\int_0^L f\cos\dfrac{n\pi x}{L}\,dx\)</td>
+        <td>\(a_0=\dfrac{1}{2L}\displaystyle\int_{-L}^L f\,dx\)<br>\(a_n=\dfrac{1}{L}\displaystyle\int_{-L}^L f\cos\dfrac{n\pi x}{L}\,dx\)<br>\(b_n=\dfrac{1}{L}\displaystyle\int_{-L}^L f\sin\dfrac{n\pi x}{L}\,dx\)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="multid">§1.5 — Deriving the Heat Equation in Multiple Space Dimensions</div>
+<div class="card">
+  <p>Consider an arbitrary solid region \(R \subset \mathbb{R}^3\). The same conservation idea applies:</p>
+  \[
+    \underbrace{\text{rate of change of heat in }R}_{\displaystyle\iiint_R c\rho\,\frac{\partial u}{\partial t}\,dV}
+    = \underbrace{\text{heat flow in across boundary}}_{\text{surface integral}}
+    + \underbrace{\text{heat generated inside}}_{\displaystyle\iiint_R Q\,dV}.
+  \]
+
+  <p>Here \(u(x,y,z,t)\) is temperature; \(c\) and \(\rho\) (specific heat and mass density) may depend on position but not time; \(Q(x,y,z,t)\) is the source term.</p>
+
+  <p>The total heat and its rate of change:</p>
+  \[
+    \text{total heat in }R = \iiint_R c\rho u\,dV,\qquad
+    \text{rate of change} = \iiint_R c\rho\,\frac{\partial u}{\partial t}\,dV.
+  \]
+  <p>The heat generated inside per unit time:</p>
+  \[
+    \iiint_R Q\,dV.
+  \]
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="divergence">Flux is a Vector — The Divergence Theorem</div>
+<div class="card">
+  <p>In 1D, heat flux \(\phi(x,t)\) was a scalar (positive = rightward). In 3D, we use a <strong>vector</strong>:</p>
+  \[
+    \vec{\phi}(x,y,z,t) \quad \left[\frac{\text{J}}{\text{s}\cdot\text{m}^2}\right]
+  \]
+  <p>representing the flow of heat energy per unit time per unit surface area.</p>
+
+  <p>The rate at which heat flows <em>into</em> region \(R\) across its closed boundary surface \(S\) (with outward unit normal \(\hat{\mathbf{n}}\)) is:</p>
+  \[
+    \text{heat energy flowing in across } S = -{\huge\unicode{x222F}}_S \vec{\phi}\cdot\hat{\mathbf{n}}\,dS.
+  \]
+  <p>(The minus sign because \(\hat{\mathbf{n}}\) points outward, so \(\vec{\phi}\cdot\hat{\mathbf{n}} > 0\) means heat is leaving.)</p>
+
+  <div class="named-box">
+    <div class="box-title">Divergence Theorem (Gauss's Theorem)</div>
+    <div class="box-body">
+      \[
+        -{\huge\unicode{x222F}}_S \vec{\phi}\cdot\hat{\mathbf{n}}\,dS = -\iiint_R \nabla\cdot\vec{\phi}\,dV,
+      \]
+      where \(S\) is the closed outward-oriented boundary surface of the solid region \(R\).
+    </div>
+  </div>
+
+  <div class="key-idea">
+    <strong>How the divergence theorem relates to FTC:</strong>
+    <ul class="content-list">
+      <li>1D: \(\int_a^b F'(x)\,dx = F(b)-F(a)\) — FTC (derivative is "anti-derivative")</li>
+      <li>3D: \(\iint_S \mathbf{F}\cdot\mathbf{n}\,dS = \iiint_Q \nabla\cdot\mathbf{F}\,dV\) — divergence theorem (divergence is "anti-divergence")</li>
+      <li>General: Stokes' theorem \(\int_{\partial\Omega}\omega = \int_\Omega d\omega\)</li>
+    </ul>
+  </div>
+
+  <p>Putting everything together:</p>
+  \[
+    \iiint_R c\rho\,\frac{\partial u}{\partial t}\,dV = -\iiint_R \nabla\cdot\vec{\phi}\,dV + \iiint_R Q\,dV.
+  \]
+  <p>Since this holds for <em>every</em> region \(R\), and the integrand is continuous, we get the PDE:</p>
+  \[
+    c\rho\,\frac{\partial u}{\partial t} = -\nabla\cdot\vec{\phi} + Q.
+  \]
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="vector-deriv">Vector Derivative Review — \(\nabla\), Gradient, Divergence, Curl</div>
+<div class="card">
+  <p>The <strong>del operator</strong>:</p>
+  \[
+    \nabla = \left\langle\frac{\partial}{\partial x},\frac{\partial}{\partial y},\frac{\partial}{\partial z}\right\rangle
+           = \frac{\partial}{\partial x}\mathbf{i} + \frac{\partial}{\partial y}\mathbf{j} + \frac{\partial}{\partial z}\mathbf{k}.
+  \]
+
+  <table class="vd-table">
+    <thead>
+      <tr><th>Operation</th><th>Formula</th><th>Input → Output</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Gradient</strong> of scalar \(f\)</td>
+        <td>\(\text{grad}\,f := \nabla f = \left\langle\dfrac{\partial f}{\partial x},\dfrac{\partial f}{\partial y},\dfrac{\partial f}{\partial z}\right\rangle\)</td>
+        <td>scalar → vector field</td>
+      </tr>
+      <tr>
+        <td><strong>Divergence</strong> of vector \(\mathbf{F}\)</td>
+        <td>\(\text{div}\,\mathbf{F} := \nabla\cdot\mathbf{F} = \dfrac{\partial F_1}{\partial x}+\dfrac{\partial F_2}{\partial y}+\dfrac{\partial F_3}{\partial z}\)</td>
+        <td>vector field → scalar</td>
+      </tr>
+      <tr>
+        <td><strong>Curl</strong> of vector \(\mathbf{F}\)</td>
+        <td>\(\text{curl}\,\mathbf{F} := \nabla\times\mathbf{F} = \left\langle\dfrac{\partial F_3}{\partial y}-\dfrac{\partial F_2}{\partial z},\,\dfrac{\partial F_1}{\partial z}-\dfrac{\partial F_3}{\partial x},\,\dfrac{\partial F_2}{\partial x}-\dfrac{\partial F_1}{\partial y}\right\rangle\)</td>
+        <td>vector field → vector field</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="multid-pde">Multi-D Heat PDE &amp; the Laplacian</div>
+<div class="card">
+  <h3>Fourier's Law in Space</h3>
+  <p>Heat flows in the direction of greatest <em>decrease</em> of temperature (opposite to \(\nabla u\)):</p>
+  \[
+    \vec{\phi} = -K_0\,\nabla u.
+  \]
+  <p>(\(\nabla u\) points in the direction of greatest increase of \(u\); so \(-K_0\nabla u\) points toward cooler regions.)</p>
+
+  <h3>The Multi-D Heat Equation (General)</h3>
+  \[
+    c\rho\,\frac{\partial u}{\partial t} = \nabla\cdot(K_0\,\nabla u) + Q.
+  \]
+
+  <h3>The Laplacian</h3>
+  <p>For constant thermal properties, define \(k := K_0/(c\rho)\) and the <strong>Laplacian</strong>:</p>
+  \[
+    \Delta u = \nabla^2 u := \nabla\cdot(\nabla u) = \frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}+\frac{\partial^2 u}{\partial z^2}.
+  \]
+
+  <div class="named-box">
+    <div class="box-title">Multi-D Heat Equation</div>
+    <div class="box-body">
+      With sources: \(\displaystyle\frac{\partial u}{\partial t} = k\,\nabla^2 u + \frac{Q}{\rho c}\).
+      <br><br>
+      Without sources:
+      \[\frac{\partial u}{\partial t} = k\,\nabla^2 u.\]
+      In 1D this reduces to \(\dfrac{\partial u}{\partial t} = k\,\dfrac{\partial^2 u}{\partial x^2}\) ✓
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="laplace">Steady States — Laplace's &amp; Poisson's Equations</div>
+<div class="card">
+  <h3>Laplace's Equation</h3>
+  <p>A <em>steady-state</em> solution is independent of time: \(u = u(x,y,z)\). Without sources, \(\partial u/\partial t = 0\) forces:</p>
+  <div class="named-box">
+    <div class="box-title">Laplace's Equation (Potential Equation)</div>
+    <div class="box-body">
+      \[\nabla^2 u = \frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}+\frac{\partial^2 u}{\partial z^2} = 0.\]
+    </div>
+  </div>
+  <p>Functions satisfying Laplace's equation are called <strong>harmonic functions</strong>. Laplace's equation is the prototypical <em>elliptic PDE</em>; the heat equation is the prototypical <em>parabolic PDE</em>.</p>
+
+  <div class="warning-box">
+    <strong>Physical connections:</strong> Where sources are zero, gravitational potential, electrostatic potential, and fluid velocity potential all satisfy Laplace's equation!
+  </div>
+
+  <h3>Poisson's Equation</h3>
+  <p>Steady states <em>with</em> sources (constant \(K_0\)):</p>
+  \[
+    \nabla^2 u(x,y,z) = -\frac{Q(x,y,z)}{K_0}.
+  \]
+  <p>This "inhomogeneous Laplace equation" is called <strong>Poisson's equation</strong>.</p>
+
+  <h3>Newtonian Gravity</h3>
+  <p>If \(u\) is the gravitational potential, the gravitational force field is \(\mathbf{F} = -\nabla u\) and the potential satisfies:</p>
+  \[
+    -\nabla^2 u \propto \rho,
+  \]
+  <p>where \(\rho\) is the mass density distribution.</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="section-header" id="gauss">Connection to Gauss's Law (Physics 212)</div>
+<div class="card">
+  <p>Maxwell's equations give \(\nabla\cdot\mathbf{E} \propto \rho\) (charge density). By the divergence theorem:</p>
+  \[
+    {\huge\unicode{x222F}}_S \mathbf{E}\cdot\hat{\mathbf{n}}\,dS = c\iiint_R \rho\,dV = c\cdot(\text{total charge in }R).
+  \]
+  <p>As long as \(\rho \equiv 0\) in the region between two nested closed surfaces \(S_1\) (inner) and \(S_2\) (outer):</p>
+  \[
+    {\huge\unicode{x222F}}_{S_{1,\text{in}}} \mathbf{E}\cdot\hat{\mathbf{n}}\,dS + {\huge\unicode{x222F}}_{S_{2,\text{out}}} \mathbf{E}\cdot\hat{\mathbf{n}}\,dS = \iiint_{\text{between}} \nabla\cdot\mathbf{E}\,dV = 0.
+  \]
+  <p>This is why you can choose <em>any</em> Gaussian test surface surrounding all the charges — the flux integral always gives the same answer. The divergence theorem is the rigorous justification of Gauss's law in integral form.</p>
+</div>
+
+</main>
+
+<footer>
+  Math 412 – Fourier Sine Coefficients, Heat Equation, Other BCs, Multiple Dimensions (§2.4, 1.5, 2.5) &nbsp;|&nbsp; Converted from lecture slides
+</footer>
+
+<button class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 412 — Chapter 4: The Wave Equation</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$']],
+    displayMath: [['$$','$$']],
+    tags: 'ams'
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #faf9f6;
+    --text: #1a1a2e;
+    --heading-bg: #2b2b8c;
+    --heading-text: #fff;
+    --accent: #c0392b;
+    --annotation-red: #c0392b;
+    --annotation-pink: #d63384;
+    --annotation-green: #1a7a3a;
+    --annotation-orange: #e67e22;
+    --annotation-blue: #2563eb;
+    --annotation-purple: #7c3aed;
+    --card-bg: #fff;
+    --border: #e0ddd5;
+    --code-bg: #f5f3ee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  header {
+    background: var(--heading-bg);
+    color: var(--heading-text);
+    padding: 2.5rem 2rem;
+    border-radius: 6px;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  header h1 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  header p {
+    font-size: 1.3rem;
+    font-weight: 300;
+    opacity: 0.9;
+  }
+
+  h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    background: var(--heading-bg);
+    color: var(--heading-text);
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    margin: 2.5rem 0 1.2rem;
+  }
+
+  h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--heading-bg);
+    margin: 1.8rem 0 0.8rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.3rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  .slide {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .annotation {
+    border-left: 3px solid var(--annotation-red);
+    background: #fdf2f0;
+    padding: 0.6rem 1rem;
+    margin: 0.8rem 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 1.05rem;
+  }
+  .annotation::before {
+    content: "✏️ ";
+    font-size: 0.95rem;
+  }
+  .annotation.pink { border-left-color: var(--annotation-pink); background: #fdf0f6; }
+  .annotation.green { border-left-color: var(--annotation-green); background: #f0faf3; }
+  .annotation.orange { border-left-color: var(--annotation-orange); background: #fef7ed; }
+  .annotation.blue { border-left-color: var(--annotation-blue); background: #eff4ff; }
+  .annotation.purple { border-left-color: var(--annotation-purple); background: #f3f0ff; }
+
+  .eq-box {
+    border: 2px solid var(--annotation-orange);
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 0;
+    background: #fffcf5;
+    text-align: center;
+  }
+
+  .eq-highlight {
+    background: #fff9e6;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin: 0.8rem 0;
+    text-align: center;
+  }
+
+  figure {
+    margin: 1.2rem 0;
+    text-align: center;
+  }
+  figcaption {
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 0.4rem;
+  }
+
+  .page-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #999;
+    text-align: right;
+    margin-top: 0.5rem;
+  }
+
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.4rem; }
+
+  .emphasis { color: var(--accent); font-weight: 600; }
+  .italic-term { font-style: italic; }
+
+  nav.toc {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  nav.toc h3 { margin-top: 0; border: none; padding: 0; }
+  nav.toc ol { margin-left: 1.2rem; }
+  nav.toc a { color: var(--heading-bg); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem; font-size: 1.05rem; }
+    header { padding: 1.5rem 1rem; }
+    header h1 { font-size: 1.5rem; }
+    .slide { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Math 412</h1>
+  <p>Chapter 4: The Wave Equation</p>
+</header>
+
+<nav class="toc" aria-label="Table of Contents">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#deriving">Deriving the 1D Wave Equation</a></li>
+    <li><a href="#slope">Slope, Tension, and Force Balance</a></li>
+    <li><a href="#elastic">Perfect Elastic &amp; Small Slope Assumptions</a></li>
+    <li><a href="#wave-eq">The 1D Wave Equation</a></li>
+    <li><a href="#bc">Boundary Conditions</a></li>
+    <li><a href="#fixed-ends">Vibrating String with Fixed Ends</a></li>
+    <li><a href="#separation">Separation of Variables</a></li>
+    <li><a href="#normal-modes">Normal Modes &amp; Instruments</a></li>
+    <li><a href="#standing">Standing Waves</a></li>
+    <li><a href="#traveling">Traveling Waves</a></li>
+  </ol>
+</nav>
+
+<!-- Slide 2 -->
+<section id="deriving">
+<h2>Deriving the 1D Wave Equation for a Vertically Vibrating String</h2>
+
+<div class="slide">
+<p>We consider a horizontally <span class="italic-term">tightly stretched</span> string with known mass density (per length).</p>
+
+<p>"Tightly stretched" means the ends are tied down in some way (to be made more precise later) so that there is a horizontal equilibrium configuration around which we will measure perturbations.</p>
+
+<p>Let $\alpha$ be the point on the string located at $x = \alpha$ when in equilibrium, so that this point on the string is located at
+$$\bigl(x(\alpha, t),\; y(\alpha, t)\bigr)$$
+at time $t$.</p>
+
+<div class="annotation">
+At equilibrium, the piece labeled $\alpha$ is located at $(\alpha, 0)$.
+</div>
+
+<p class="page-num">2/20</p>
+</div>
+</section>
+
+<!-- Slide 3 -->
+<section>
+<div class="slide">
+<p>We have
+$$\langle v(\alpha,t),\, u(\alpha,t)\rangle = \langle x(\alpha,t) - \alpha,\; y(\alpha,t) - 0 \rangle$$
+is the displacement vector from equilibrium.</p>
+
+<p>We assume the <span class="emphasis">slope of the string is small</span>, so that the horizontal displacement $v$ can be neglected and the <span class="italic-term">motion is entirely vertical</span>, thus $x = \alpha$, and we can track the string entirely by</p>
+
+<div class="eq-highlight">
+$$y = y(\alpha, t) = y(x, t) = \boxed{u(x,t)}.$$
+</div>
+
+<p>For the 1D wave equation we'll derive from force balance, the unknown function is
+$$u(x, t)$$
+which is the vertical displacement (from equilibrium) of the point on the string located at horizontal position $x$ at time $t$.</p>
+
+<p class="page-num">3/20</p>
+</div>
+</section>
+
+<!-- Slide 4 -->
+<section id="slope">
+<h2>Slope, Tension, and Force Balance</h2>
+
+<div class="slide">
+<p>Let
+$$\left.\frac{dy}{dx}\right|_{(x,t)} = \left.\tan\theta\right|_{(x,t)} = \frac{\partial u}{\partial x}(x,t) \quad \text{(dimensionless)}$$
+be the slope of the string (so $\theta$ is the angle from horizontal).</p>
+
+<div class="annotation">
+$\theta(x,t)$: elevation angle of string at position $x$, time $t$.
+</div>
+
+<p>We assume the string is <span class="italic-term">perfectly flexible</span> so that the only force the string exerts on itself is in the <span class="italic-term">tangential direction</span> with magnitude
+$$T(x,t) > 0 \;\text{N}$$
+where $T$ is the tension.</p>
+
+<div class="annotation green">
+$T(x,t)$ is the <strong>length of the tension force vector</strong> (along the string).
+</div>
+
+<div class="annotation pink">
+Vertical projection of tension force at right end of a small piece; picture case with $\theta > 0$ on this piece.
+</div>
+
+<p class="page-num">4/20</p>
+</div>
+</section>
+
+<!-- Slide 5 -->
+<section>
+<div class="slide">
+<p>We consider the force balance equation (Newton's second law) for a small segment of string:</p>
+$$m\mathbf{a} = \mathbf{F}.$$
+
+<div class="annotation">
+$\rho(x)$: linear density $\left(\frac{\text{kg}}{\text{m}}\right)$ along string.
+</div>
+
+<p>The horizontal component can be neglected (small slope assumption) and the vertical component is</p>
+
+$$\underbrace{\rho(x)\,\Delta x}_{\text{mass of small piece}} \;\frac{\partial^2 u}{\partial t^2} = \underbrace{T(x+\Delta x,t)\sin\theta(x+\Delta x,t)}_{\uparrow} - \underbrace{T(x,t)\sin\theta(x,t)}_{\downarrow} + \rho(x)\Delta x\, Q(x,t),$$
+
+<div class="annotation">
+Left side: mass × vertical acceleration. E.g. gravity: $Q(x,t) = -9.8\;\frac{\text{m}}{\text{s}^2}$.
+</div>
+
+<p>where $Q(x,t)$ is the (vertical) <span class="italic-term">body force</span> (gravitational, electromagnetic, …) per unit mass. Divide by $\Delta x$ and take the limit to $0$ to obtain</p>
+
+$$\rho(x)\frac{\partial^2 u}{\partial t^2} = \frac{\partial}{\partial x}\bigl(T(x,t)\sin\theta(x,t)\bigr) + \rho(x)\,Q(x,t).$$
+
+<div class="annotation blue">
+Note: $\dfrac{\partial u}{\partial x} = \tan\theta \neq \sin\theta$ in general.
+</div>
+
+<p class="page-num">5/20</p>
+</div>
+</section>
+
+<!-- Slide 6 -->
+<section id="elastic">
+<h2>Perfect Elastic Assumption + Small Slope</h2>
+
+<div class="slide">
+<div class="annotation">
+Think of a rubber band!
+</div>
+
+<p>Real strings are nearly <span class="italic-term">perfectly elastic</span>, meaning $T(x,t)$ depends only on the local stretching of the string. However, this "local stretching" satisfies</p>
+
+$$\sqrt{1 + \left(\frac{dy}{dx}\right)^2} - 1 \le \frac{1}{2}\left(\frac{dy}{dx}\right)^2$$
+
+<div class="annotation">
+This measures the stretching. The length of a small piece is $\sqrt{\Delta x^2 + \Delta y^2} = \Delta x\sqrt{1 + \left(\frac{\Delta y}{\Delta x}\right)^2}$, versus the equilibrium length $\Delta x$.
+</div>
+
+<p>using the Mean Value Theorem, and this is second order in our "small slope".</p>
+
+<p>More precisely, for $x \ge 0$,
+$$\sqrt{1+x} - 1 = \frac{1}{2\sqrt{1+z}}(x - 0) \le \frac{1}{2}x$$
+for some $0 < z < x$.</p>
+
+<p class="page-num">6/20</p>
+</div>
+</section>
+
+<!-- Slide 7 -->
+<section>
+<div class="slide">
+<p>Therefore, our "small slope" assumption — $\dfrac{dy}{dx} \approx 0$, ignoring anything second order or higher in $\dfrac{dy}{dx}$ — leads to assuming the tension is constant:</p>
+
+<div class="eq-box">
+$$T(x,t) \equiv T_0.$$
+</div>
+
+<p>This small slope assumption also allows us to approximate</p>
+$$\sin\theta(x,t) \approx \tan\theta(x,t) = \frac{dy}{dx} = \frac{\partial u}{\partial x},$$
+
+<p>since assuming $\dfrac{dy}{dx} = \tan\theta$ is small is equivalent to assuming $\theta$ is small since $\tan\theta$ and $\theta$ agree to first order near $\theta = 0$, and then $\sin\theta \approx \tan\theta$ for $\theta \approx 0$.</p>
+
+<div class="annotation blue">
+Taylor expansions: $\sin\theta = \theta - \frac{\theta^3}{6} + \cdots$, $\tan\theta = \theta - \frac{\theta^3}{3} + \cdots$. These agree to first order.
+</div>
+
+<div class="annotation green">
+For non-small angles: $\sin\theta(x,t) = \cos\theta \cdot \tan\theta$, so $T(x,t) = T\!\left(\frac{\partial u}{\partial x}\right)$ or $T\!\left(\sqrt{1 + \left(\frac{\partial u}{\partial x}\right)^2} - 1\right)$.
+</div>
+
+<p class="page-num">7/20</p>
+</div>
+</section>
+
+<!-- Slide 8 -->
+<section id="wave-eq">
+<h2>The 1D Wave Equation</h2>
+
+<div class="slide">
+<p>Therefore, substituting $T(x,t) \equiv T_0$ and $\sin\theta \approx \frac{\partial u}{\partial x}$:</p>
+
+$$\rho(x)\frac{\partial^2 u}{\partial t^2} = \frac{\partial}{\partial x}\!\left(T(x,t)\sin\theta(x,t)\right) + \rho(x)\,Q(x,t)$$
+
+<p>leads to</p>
+$$\rho(x)\frac{\partial^2 u}{\partial t^2} = T_0 \frac{\partial^2 u}{\partial x^2} + \rho(x)\,Q(x,t).$$
+
+<div class="annotation orange">
+The body force $Q$ is crossed out: often negligible relative to the tensile force.
+</div>
+
+<p>For $Q(x,t) = -g$ (or other similar scenarios), we often have this force is negligible relative to the tensile force, and so we have</p>
+
+$$\frac{\partial^2 u}{\partial t^2} = \frac{T_0}{\rho(x)}\frac{\partial^2 u}{\partial x^2}.$$
+
+<p>In the case where $\rho(x) = \rho_0$ is constant, we have the <span class="emphasis">1D wave equation</span>:</p>
+
+<div class="eq-box">
+$$\frac{\partial^2 u}{\partial t^2} = c^2 \frac{\partial^2 u}{\partial x^2}$$
+</div>
+
+<div class="annotation">
+$\dfrac{T_0}{\rho_0} =: c^2$, where $c^2$ has units of speed squared. It represents the <strong>traveling wave speed</strong> for the wave equation.
+</div>
+
+<div class="annotation orange">
+More on this on HW!
+</div>
+
+<p class="page-num">8/20</p>
+</div>
+</section>
+
+<!-- Slide 9 -->
+<section id="bc">
+<h2>Boundary Conditions</h2>
+
+<div class="slide">
+<div class="annotation pink">
+Like guitar or piano strings!
+</div>
+
+<p>Like our heat equation / Laplace (steady heat) equation problems, we need boundary conditions.</p>
+
+<p>For a string occupying $0 \le x \le L$, at either end (i.e., at $x = 0$ or $x = L$) we can have:</p>
+
+<ul>
+  <li><strong>Prescribed displacement:</strong> $u(\cdot, t) = f(t)$ or fixed at zero displacement: $u(\cdot, t) = 0$.</li>
+  <li><strong>Free end:</strong> attached to frictionless vertically moving track:
+    $$T_0\frac{\partial u}{\partial x}(\cdot, t) = 0 \quad \text{(or prescribed angle at end)}$$
+  </li>
+  <li><strong>Attached to mass-spring system</strong> with variable support:
+    $$m\frac{d^2}{dt^2}u(\cdot, t) = -k\bigl(u(\cdot, t) - y_s(t) - l\bigr) + T_0\frac{\partial u}{\partial x}(\cdot, t)$$
+  </li>
+</ul>
+
+<div class="annotation pink">
+The bottom of the spring support $y_s(t)$ is known.
+</div>
+
+<p class="page-num">9/20</p>
+</div>
+</section>
+
+<!-- Slide 10 -->
+<section id="fixed-ends">
+<h2>Vibrating String with Fixed Ends</h2>
+
+<div class="slide">
+<p>We consider</p>
+
+$$\begin{cases}
+\dfrac{\partial^2 u}{\partial t^2} = c^2\dfrac{\partial^2 u}{\partial x^2} & 0 < x < L,\; t > 0 \\[8pt]
+u(0, t) = 0 & t > 0 \\[4pt]
+u(L, t) = 0 & t > 0 \\[4pt]
+u(x, 0) = f(x) & 0 \le x \le L \\[4pt]
+\dfrac{\partial u}{\partial t}(x, 0) = g(x) & 0 \le x \le L
+\end{cases}$$
+
+<div class="annotation">
+$u(x,0) = f(x)$: <strong>initial shape of string</strong>.
+</div>
+<div class="annotation blue">
+$\dfrac{\partial u}{\partial t}(x,0) = g(x)$: <strong>initial vertical velocity along string</strong>.
+</div>
+
+<p>Second-order ODEs require initial value and initial derivative; for this second-order time PDE (like all Newton's law situations, ODE or PDE) we need to know the <strong>initial position</strong> and <strong>velocity</strong> of each segment of string to have any hope of predicting the future.</p>
+
+<p class="page-num">10/20</p>
+</div>
+</section>
+
+<!-- Slide 11 -->
+<section id="separation">
+<h2>Separation of Variables</h2>
+
+<div class="slide">
+<p>As usual, the product solution ansatz is</p>
+$$u_p(x,t) = \phi(x)\,h(t)$$
+
+<div class="annotation">
+Substituting: $\phi\, h'' = c^2 \phi''\, h$. Divide by $\phi\, h\, c^2$.
+</div>
+
+<p>leading to</p>
+$$\frac{1}{c^2}\frac{h''(t)}{h(t)} = \frac{\phi''(x)}{\phi(x)} =: -\lambda.$$
+
+<p>The separated ODE system is then</p>
+
+$$\begin{cases}
+\phi''(x) = -\lambda\,\phi(x), & \phi(0) = \phi(L) = 0 \\[6pt]
+h''(t) = -\lambda\, c^2\, h(t)
+\end{cases}$$
+
+<div class="annotation">
+This is the same $\phi$ BVP we've seen all semester! (Laplace's equation eigenvalue problem: $\phi'' = -\lambda\phi$.)
+</div>
+
+<div class="annotation purple">
+$\phi$: $\cos/\sin$ when $\lambda > 0$. $h$: $\cosh/\sinh$ when $\lambda < 0$ — but $h'' = -\lambda c^2 h$ with $\lambda > 0$ gives $\cos/\sin$ for $h$ too.
+</div>
+
+<p>The only nontrivial solutions are</p>
+$$\phi(x) = B\sin\!\left(\frac{n\pi x}{L}\right) \quad \text{corresponding to } \lambda = \left(\frac{n\pi}{L}\right)^2 > 0.$$
+
+<p class="page-num">11/20</p>
+</div>
+</section>
+
+<!-- Slide 12 -->
+<section>
+<div class="slide">
+<div class="annotation">
+$h'' + \left(\frac{n\pi c}{L}\right)^2 h = 0$
+</div>
+
+<p>Since the structure of the wave equation means that $h$ "solves the exact same sort of ODE" (with separation constant dilated by $c^2 > 0$) we have</p>
+
+$$h(t) = c_1\sin\!\left(\frac{n\pi c\, t}{L}\right) + c_2\cos\!\left(\frac{n\pi c\, t}{L}\right)$$
+
+<p>and superimposed solutions</p>
+
+<div class="eq-box">
+$$u(x,t) = \sum_{n=1}^{\infty}\left(A_n \sin\frac{n\pi x}{L}\cos\frac{n\pi c\, t}{L} + B_n \sin\frac{n\pi x}{L}\sin\frac{n\pi c\, t}{L}\right).$$
+</div>
+
+<div class="annotation">
+Inhomogeneous conditions: $u(x,0) = f(x)$ and $\frac{\partial u}{\partial t}(x,0) = g(x)$.
+</div>
+
+<div class="annotation pink">
+At $t = 0$: the $\cos$ terms become $1$ and the $\sin$ terms become $0$, giving $u(x,0) = \sum A_n \sin\frac{n\pi x}{L} = f(x)$.
+</div>
+
+<div class="annotation pink">
+Computing $\frac{\partial u}{\partial t}$: the $\cos\frac{n\pi ct}{L}$ differentiates to $-\frac{n\pi c}{L}\sin\frac{n\pi ct}{L}$ (which vanishes at $t=0$), and $\sin\frac{n\pi ct}{L}$ differentiates to $\frac{n\pi c}{L}\cos\frac{n\pi ct}{L}$ (which is $\frac{n\pi c}{L}$ at $t=0$).
+</div>
+
+<p class="page-num">12/20</p>
+</div>
+</section>
+
+<!-- Slide 13 -->
+<section>
+<div class="slide">
+<p>Initial conditions require</p>
+
+$$f(x) = \sum_{n=1}^{\infty} A_n \sin\frac{n\pi x}{L}$$
+
+$$g(x) = \sum_{n=1}^{\infty}\underbrace{B_n \frac{n\pi c}{L}}\sin\frac{n\pi x}{L}.$$
+
+<p>Usual orthogonality relations lead to</p>
+
+<div class="eq-box">
+$$A_n = \frac{2}{L}\int_0^L f(x)\sin\frac{n\pi x}{L}\,dx$$
+$$B_n = \frac{2}{n\pi c}\int_0^L g(x)\sin\frac{n\pi x}{L}\,dx.$$
+</div>
+
+<div class="annotation">
+Use the orthogonality: $\frac{2}{L}\int_0^L g(x)\sin\frac{n\pi x}{L}\,dx = B_n\frac{n\pi c}{L}$, so solve for $B_n$.
+</div>
+
+<div class="annotation purple">
+$\omega$ is angular frequency (rad/sec). One product solution: $X\cos(\omega t) + Y\sin(\omega t) = R\cos(\omega t - \Theta)$, where $(X,Y) \to (R,\Theta)$ in polar coordinates.
+</div>
+
+<p class="page-num">13/20</p>
+</div>
+</section>
+
+<!-- Slide 14–15 -->
+<section id="normal-modes">
+<h2>Normal Modes &amp; Stringed Instrument Interpretation</h2>
+
+<div class="slide">
+<p>Vertical displacement is a linear combination of simple product solutions, or <span class="emphasis">normal modes</span> of vibration/oscillation:</p>
+
+$$\sin\frac{n\pi x}{L}\left(A_n\cos\frac{n\pi c\,t}{L} + B_n\sin\frac{n\pi c\,t}{L}\right) = R_n\sin\frac{n\pi x}{L}\cos\!\left(\frac{n\pi c\,t}{L} - \Theta_n\right).$$
+
+<div class="annotation">
+$R_n$: <strong>amplitude</strong>. $\Theta_n$: <strong>phase delay angle</strong>.
+</div>
+
+<p>Here we combined the time cosine–sine sum (with same frequency) into a single phase-shifted cosine with amplitude $R_n = \sqrt{A_n^2 + B_n^2}$ and "phase delay" $\Theta_n$ which satisfies $\tan\Theta_n = \dfrac{B_n}{A_n}$.</p>
+
+<p>The time-frequency (in Hz if $t$ has units seconds) of oscillations is</p>
+
+<div class="eq-box">
+$$f = \frac{\left(\frac{n\pi c}{L}\right)}{2\pi} = \frac{nc}{2L} = \frac{n\sqrt{T_0}}{2L\sqrt{\rho_0}}.$$
+</div>
+
+<div class="annotation">
+$2\pi$ radians = 1 cycle. Hz = "cycles/sec" = $\frac{1}{\text{sec}}$.
+</div>
+
+<p>$n = 1$ is the <span class="emphasis">first harmonic</span> or <span class="italic-term">fundamental</span>, and the other <span class="italic-term">natural frequencies</span> are integer multiples of it.</p>
+
+<p class="page-num">14/20</p>
+</div>
+
+<div class="slide">
+<p>Instruments are tuned by adjusting the tension $T_0$; guitars, violins, etc. are played by adjusting $L$, and they need a "fresh setup" if you change string gauge (adjust $\rho_0$ — so to get the same tuning you'd need to change $T_0$).</p>
+
+<p>The <span class="italic-term">timbre</span> of an instrument is determined by the typical amplitudes $\{R_n\} = \{R_1, R_2, R_3, \ldots\}$ of the modes produced by typical initial/forcing conditions.</p>
+
+<div class="annotation purple">
+Standing wave = spatial profile × oscillation: $f(x,t) = F(x)\,G(t)$.
+</div>
+
+<p class="page-num">15/20</p>
+</div>
+</section>
+
+<!-- Slide 16 -->
+<section id="standing">
+<h2>Standing Waves</h2>
+
+<div class="slide">
+<p>If we think of each normal mode as</p>
+
+$$\underbrace{R_n\cos\!\left(\frac{n\pi c\,t}{L} - \Theta_n\right)}_{\text{time-dependent amplitude}} \cdot \sin\frac{n\pi x}{L},$$
+
+<p>we have a simple oscillation in $x$ whose amplitude varies periodically in time — which we call a <span class="emphasis">standing wave</span>.</p>
+
+<p>All modes are $0$ at $x = 0, L$;</p>
+<ul>
+  <li>The $n = 2$ (second harmonic, an octave up) mode has a <span class="italic-term">node</span> at $x = \dfrac{L}{2}$.</li>
+  <li>The $n = 3$ (third harmonic, a perfect fifth!) mode has nodes at $x = \dfrac{L}{3},\;\dfrac{2L}{3}$; …</li>
+</ul>
+
+<p class="page-num">16/20</p>
+</div>
+</section>
+
+<!-- Slide 17 -->
+<section id="traveling">
+<h2>Traveling Waves</h2>
+
+<div class="slide">
+<p>A function $u(x,t)$ is a <span class="emphasis">traveling wave</span> with velocity $+c$ (so moving right) if it is of the form</p>
+
+$$u(x,t) := R(x - ct).$$
+
+<div class="annotation">
+$c > 0$: wave moves to the right.
+</div>
+
+<p>The functions $u(\cdot, t)$ are all horizontal shifts of $u(\cdot, 0)$; it describes time-dependence of "keeping the same exact shape, sliding with constant velocity $+c$".</p>
+
+<div class="annotation pink">
+$u(x,0) = R(x)$ at $t=0$; $u(x,1) = R(x-c)$ shifted right by $c$; $u(x,2) = R(x-2c)$ shifted right by $2c$.
+</div>
+
+<p class="page-num">17/20</p>
+</div>
+</section>
+
+<!-- Slide 18 -->
+<section>
+<div class="slide">
+<p>Additionally, using the product-to-sum identity we have</p>
+
+$$R_n\sin\frac{n\pi x}{L}\cos\!\left(\frac{n\pi c\,t}{L} - \Theta_n\right) = \frac{R_n}{2}\left[\sin\!\left(\frac{n\pi}{L}(x - ct) + \Theta_n\right) + \sin\!\left(\frac{n\pi}{L}(x + ct) - \Theta_n\right)\right]$$
+
+$$=: R(x - ct) + S(x + ct),$$
+
+<div class="annotation">
+$R(x-ct)$: <strong>right-moving wave</strong>. $S(x+ct)$: <strong>left-moving wave</strong>.
+</div>
+
+<p>so each term (and therefore the full solution) is a linear combination of just two traveling waves — one with velocity $+c$ and one with velocity $-c$.</p>
+
+<div class="annotation orange">
+Each normal mode (different time frequency, each term) decomposes into traveling waves. <strong>BUT:</strong> $\sum(\text{normal modes}) \neq \text{standing wave}$ in general. However, $\sum(\text{normal modes}) = \sum R_n(x-ct) + \sum S_n(x+ct)$.
+</div>
+
+<p class="page-num">18/20</p>
+</div>
+</section>
+
+<!-- Slide 20 -->
+<section>
+<div class="slide">
+<p>We would call $c$ the "speed of vibration propagation (sound?) of the medium" (so the string), which is <strong>not</strong> the familiar sound speed $c \approx 343$ m/s for air.</p>
+
+<div class="annotation orange">
+$c = \sqrt{\dfrac{T_0}{\rho_0}}$ has units m/s.
+</div>
+
+<p>The <strong>2D wave equation</strong> governs drums, membranes, etc. (would set up force due to surface tension in this case).</p>
+
+<p>The <strong>3D wave equation</strong> with $c \approx 343$ m/s arises from linearizing the compressible Euler (no friction) fluid equations and governs the behavior of small pressure variations in the air — so it's the law of the land for all the "sound" we hear!</p>
+
+<p>In addition, <span class="italic-term">Maxwell's equations</span> are a system of 6 PDE in $(x, y, z, t)$ that govern the three magnetic and electric field components in electromagnetism. The wave equation can be discovered in these more complicated equations, and in that case $c \approx 3 \times 10^8$ m/s is the speed of light (which is defined in terms of the "free space physical parameters" $\mu_0, \epsilon_0$ in Maxwell's equations).</p>
+
+<p class="page-num">20/20</p>
+</div>
+</section>
+
+</body>
+</html>

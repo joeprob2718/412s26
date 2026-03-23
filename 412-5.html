@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 412 — Ch 3: Fourier Series Theory</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$']],
+    displayMath: [['$$','$$']],
+    tags: 'ams'
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #faf9f6;
+    --text: #1a1a2e;
+    --heading-bg: #2b2b8c;
+    --heading-text: #fff;
+    --accent: #c0392b;
+    --annotation-red: #c0392b;
+    --annotation-pink: #d63384;
+    --annotation-green: #1a7a3a;
+    --annotation-orange: #e67e22;
+    --annotation-blue: #2563eb;
+    --annotation-purple: #7c3aed;
+    --card-bg: #fff;
+    --border: #e0ddd5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  header {
+    background: var(--heading-bg);
+    color: var(--heading-text);
+    padding: 2.5rem 2rem;
+    border-radius: 6px;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  header h1 { font-family: 'Source Sans 3', sans-serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+  header p { font-size: 1.3rem; font-weight: 300; opacity: 0.9; }
+
+  h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 1.5rem;
+    background: var(--heading-bg); color: var(--heading-text);
+    padding: 0.6rem 1.2rem; border-radius: 4px;
+    margin: 2.5rem 0 1.2rem;
+  }
+
+  h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600; font-size: 1.2rem;
+    color: var(--heading-bg);
+    margin: 1.8rem 0 0.8rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.3rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  .slide {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .annotation {
+    border-left: 3px solid var(--annotation-red);
+    background: #fdf2f0;
+    padding: 0.6rem 1rem;
+    margin: 0.8rem 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 1.05rem;
+  }
+  .annotation::before { content: "✏️ "; font-size: 0.95rem; }
+  .annotation.pink { border-left-color: var(--annotation-pink); background: #fdf0f6; }
+  .annotation.green { border-left-color: var(--annotation-green); background: #f0faf3; }
+  .annotation.orange { border-left-color: var(--annotation-orange); background: #fef7ed; }
+  .annotation.blue { border-left-color: var(--annotation-blue); background: #eff4ff; }
+  .annotation.purple { border-left-color: var(--annotation-purple); background: #f3f0ff; }
+
+  .eq-box {
+    border: 2px solid var(--annotation-orange);
+    border-radius: 6px;
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 0;
+    background: #fffcf5;
+    text-align: center;
+  }
+
+  .eq-highlight {
+    background: #fff9e6;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin: 0.8rem 0;
+    text-align: center;
+  }
+
+  .page-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #999;
+    text-align: right;
+    margin-top: 0.5rem;
+  }
+
+  .emphasis { color: var(--accent); font-weight: 600; }
+  .italic-term { font-style: italic; }
+
+  .footnote {
+    font-size: 0.95rem;
+    color: #555;
+    border-top: 1px solid var(--border);
+    padding-top: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  nav.toc {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  nav.toc h3 { margin-top: 0; border: none; padding: 0; }
+  nav.toc ol { margin-left: 1.2rem; }
+  nav.toc a { color: var(--heading-bg); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem; font-size: 1.05rem; }
+    header { padding: 1.5rem 1rem; }
+    header h1 { font-size: 1.5rem; }
+    .slide { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Math 412</h1>
+  <p>Ch 3: Fourier Series Theory</p>
+</header>
+
+<nav class="toc" aria-label="Table of Contents">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#full-series">Full Fourier Series on $[-L, L]$</a></li>
+    <li><a href="#convergence">Convergence Questions</a></li>
+    <li><a href="#piecewise">Piecewise Smooth Functions</a></li>
+    <li><a href="#fourier-thm">Fourier's Theorem</a></li>
+    <li><a href="#term-diff">Term-by-Term Differentiation</a></li>
+    <li><a href="#counterexample">Counterexample</a></li>
+    <li><a href="#sufficient">Sufficient Conditions for Differentiation</a></li>
+    <li><a href="#sine-series">Fourier Sine Series on $[0, L]$</a></li>
+    <li><a href="#cosine-series">Fourier Cosine Series on $[0, L]$</a></li>
+    <li><a href="#integration">Integration Is Better Behaved</a></li>
+    <li><a href="#application">Fun Application: The Basel Problem</a></li>
+  </ol>
+</nav>
+
+<!-- Slide 2 -->
+<section id="full-series">
+<h2>Full Fourier Series on $[-L, L]$</h2>
+
+<div class="slide">
+<div class="annotation">
+3rd column of the reference sheet: "full Fourier series on $[-L, L]$".
+</div>
+
+<p>We consider the setting that gave us both sines and cosines — periodic boundary conditions on $[-L, L]$. Provided $f$ has a Fourier series — that is, if we assume we can write</p>
+
+$$f(x) = a_0 + \sum_{n=1}^{\infty} a_n\cos\!\left(\frac{n\pi x}{L}\right) + \sum_{n=1}^{\infty} b_n\sin\!\left(\frac{n\pi x}{L}\right),$$
+
+<p>we exploited standard integral calculations to show we'd need</p>
+
+<div class="eq-box">
+$$a_0 = \frac{1}{2L}\int_{-L}^{L} f(x)\,dx$$
+$$a_n = \frac{1}{L}\int_{-L}^{L} f(x)\cos\!\left(\frac{n\pi x}{L}\right)dx$$
+$$b_n = \frac{1}{L}\int_{-L}^{L} f(x)\sin\!\left(\frac{n\pi x}{L}\right)dx.$$
+</div>
+
+<p class="page-num">2/26</p>
+</div>
+</section>
+
+<!-- Slide 3 -->
+<section id="convergence">
+<h2>Convergence Questions</h2>
+
+<div class="slide">
+<p>For which functions $f$ can the coefficients be defined? For these functions, do their Fourier series converge? Do they converge to $f(x)$?</p>
+
+<p>Examples of issues of Taylor series expansions include</p>
+
+$$\frac{1}{1-x} = 1 + x + x^2 + x^3 + \cdots$$
+
+<p>which diverges for $|x| \ge 1$, while</p>
+
+$$f(x) = \begin{cases} e^{-1/x^2} & x \neq 0 \\ 0 & x = 0 \end{cases}$$
+
+<div class="annotation green">
+This function is <strong>smooth</strong> (infinitely differentiable) but <strong>not analytic</strong> — it doesn't equal its Taylor series on any interval.
+</div>
+
+<p>is an example of an infinitely differentiable function whose Maclaurin series converges for all $x$, but does <em>not</em> converge to $f(x)$ on any interval. (The derivatives of this "infinitely flat function" all satisfy $0 = f(0) = f'(0) = f''(0) = f'''(0) = \cdots$.)</p>
+
+<p class="page-num">3/26</p>
+</div>
+</section>
+
+<!-- Slide 4 -->
+<section id="piecewise">
+<h2>Piecewise Smooth Functions</h2>
+
+<div class="slide">
+<p>We consider functions $f(x)$ that are <span class="emphasis">piecewise smooth</span> on $[-L, L]$.</p>
+
+<p>This means that away from finitely many <span class="italic-term">jump discontinuities</span>, both $f$ and $f'$ are continuous.</p>
+
+<p>Our definition of a <span class="italic-term">jump discontinuity</span> at $x_0$ requires the left and right limits $f(x_0^\pm)$ exist (as finite numbers!) but are not equal.</p>
+
+<div class="annotation">
+Both $f$ and $f'$ have a jump at the discontinuity points.
+</div>
+
+<p>E.g. $f(x) = x^{1/3}$ is <strong>not</strong> piecewise smooth, since $f'$ has an infinite discontinuity (which we don't classify as a jump discontinuity).</p>
+
+<div style="display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start; margin:1rem 0;">
+  <figure style="flex:1; min-width:240px;">
+    <img src="fig_discontinuity_examples.png" alt="Figure 3.1.1: Jump discontinuity at x₀ showing f(x₀⁺) and f(x₀⁻). Figure 3.1.2: Example of a piecewise smooth function with jumps at x₁, x₂, x₃. Annotations: both f and f' have a jump; f' has a jump." style="max-width:100%; border:1px solid #e0ddd5; border-radius:4px;">
+    <figcaption><strong>Figure 3.1.1</strong> Jump discontinuity at $x = x_0$. <strong>Figure 3.1.2</strong> Example of a piecewise smooth function.</figcaption>
+  </figure>
+  <figure style="flex:1; min-width:200px;">
+    <img src="fig_cube_root.png" alt="Graph of f(x) = x^(1/3) and its derivative f'(x) = 1/(3x^(2/3)), showing that f'(x) → +∞ as x → 0. Annotation: f'(x) = 1/(3x^(2/3)), limit is +∞." style="max-width:100%; border:1px solid #e0ddd5; border-radius:4px;">
+    <figcaption>$f(x) = x^{1/3}$ is not piecewise smooth: $f'(x) \to +\infty$ as $x \to 0$.</figcaption>
+  </figure>
+</div>
+
+<div class="annotation">
+$f'(x) = \frac{1}{3}x^{-2/3}$, so $\displaystyle\lim_{x \to 0} f'(x) = +\infty$ — not a jump!
+</div>
+
+<p class="page-num">4/26</p>
+</div>
+</section>
+
+<!-- Slide 5 -->
+<section>
+<div class="slide">
+<p>By considering piecewise smooth functions, we've guaranteed the Fourier coefficients can be defined.</p>
+
+<div class="annotation">
+$f$ "has Fourier series".
+</div>
+
+<p>In this case, we write</p>
+
+$$f(x) \sim a_0 + \sum_{n=1}^{\infty} a_n\cos\!\left(\frac{n\pi x}{L}\right) + \sum_{n=1}^{\infty} b_n\sin\!\left(\frac{n\pi x}{L}\right),$$
+
+<p>and reserve "$=$" to mean "RHS converges" <strong>AND</strong> "RHS sum equals $f(x)$".</p>
+
+<p>Note that $f$ only needs to be defined on at least $[-L, L]$ for the above to make sense; in other words $[-L, L]$ doesn't need to have any particular significance for $f$. However, $[-L, L]$ is "built in" to the RHS because the interval $[-L, L]$ dictates which frequencies occur in the trig sums — positive integer multiples of $\dfrac{\pi}{L}$.</p>
+
+<p class="page-num">5/26</p>
+</div>
+</section>
+
+<!-- Slide 6 -->
+<section>
+<div class="slide">
+<p>The RHS is periodic with period $2L$ even if $f$ is not.</p>
+
+<p>Define $f_p(x)$, the <span class="emphasis">periodic extension</span> of $f(x)$ from $[-L, L]$, to equal $f(x)$ on $[-L, L]$, with the same behavior "copy and pasted" to create a $2L$-periodic function on $(-\infty, \infty)$.</p>
+
+<div class="annotation">
+Restrict $f$ to $[-L, L]$, then tile periodically. This gives the "Full $[-L, L]$ Fourier series."
+</div>
+
+<figure style="margin:1rem 0; text-align:center;">
+  <img src="fig_periodic_extension.png" alt="Figure 3.1.4: Periodic extension of f(x) = (3/2)x from [-L,L]. Shows the original line segment on [-L,L] (in red/black) copy-and-pasted periodically, creating a sawtooth pattern with jumps at odd multiples of L. Annotations: restrict f to [-L,L], Full [-L,L] Fourier series." style="max-width:100%; border:1px solid #e0ddd5; border-radius:4px;">
+  <figcaption><strong>Figure 3.1.4</strong> Periodic extension of $f(x) = \tfrac{3}{2}x$ from $[-L, L]$. Annotations show restricting $f$ to $[-L,L]$ and tiling.</figcaption>
+</figure>
+
+<p>If $f(-L) \neq f(L)$ this introduces jumps, but finitely many jumps were permitted within $[-L, L]$ so this is no problem — if $f$ is piecewise smooth on $[-L, L]$ so is $f_p(x)$.</p>
+
+<p class="page-num">6/26</p>
+</div>
+</section>
+
+<!-- Slide 7 -->
+<section id="fourier-thm">
+<h2>Fourier's Theorem</h2>
+
+<div class="slide">
+<p><strong>Theorem (Fourier's Theorem):</strong> If $f(x)$ is piecewise smooth on $[-L, L]$, then</p>
+
+<div class="eq-box">
+$$\frac{f_p(x^+) + f_p(x^-)}{2} = a_0 + \sum_{n=1}^{\infty} a_n\cos\!\left(\frac{n\pi x}{L}\right) + \sum_{n=1}^{\infty} b_n\sin\!\left(\frac{n\pi x}{L}\right) \quad \text{for all } x,$$
+</div>
+
+<p>where $f_p$ is the periodic extension from $[-L, L]$. Here $f_p(x^\pm)$ are the one-sided limits of $f_p(\cdot)$ at $x$.</p>
+
+<p>Since $f_p(x^\pm) = f_p(x)$ anywhere the periodic extension is continuous, and we quickly know how $f_p(x)$ relates to $f(x)$, this is a very powerful convergence theorem. (These trig sums are better behaved than power series!)</p>
+
+<p>In addition, converging to the average of the two one-sided limits at any jumps is about as nice as things could get as well.</p>
+
+<p class="page-num">7/26</p>
+</div>
+</section>
+
+<!-- Slide 8 -->
+<section>
+<div class="slide">
+<p>The proof is difficult and outside the scope of this class.</p>
+
+<p><strong>Convergence in $L^2[-L,L]$ norm</strong> (square integrable functions) uses vector space / inner product arguments — the key step is <span class="italic-term">Parseval's identity</span> which relates the $L^2$ norm of $f(x)$ with the $\ell^2$ norm of the Fourier coefficient sequence.</p>
+
+<p><strong>Convergence pointwise</strong> (what we stated above) is a bit more difficult — we need to write "Fourier partial sums" as convolutions with what are called <span class="italic-term">Dirichlet kernels</span>. Unfortunately, these Dirichlet kernels do not have the nice properties that "delta kernels" do, so establishing pointwise convergence to $f(x)$ at points of continuity (and to the average of one-sided limits at jumps) is more difficult.</p>
+
+<p>See Stein &amp; Shakarchi, <em>Princeton Lectures in Analysis Volume 1</em> for proofs from scratch.</p>
+
+<p class="page-num">8/26</p>
+</div>
+</section>
+
+<!-- Slide 9 -->
+<section id="term-diff">
+<h2>Term-by-Term Differentiation</h2>
+
+<div class="slide">
+<p>The rigorous justification of why an infinite linear combination</p>
+
+$$u(x,t) = a_0 + \sum_{n=1}^{\infty}\left[a_n\cos\!\left(\frac{n\pi x}{L}\right) + b_n\sin\!\left(\frac{n\pi x}{L}\right)\right]e^{-k(n\pi/L)^2 t}$$
+
+<p>solves $\dfrac{\partial u}{\partial t} = k\dfrac{\partial^2 u}{\partial x^2}$ (with periodic boundary conditions) requires justifying the following:</p>
+
+$$\frac{\partial}{\partial t}\sum_{n=0}^{\infty} u_n = \sum_{n=0}^{\infty}\frac{\partial u_n}{\partial t}, \qquad \frac{\partial^2}{\partial x^2}\sum_{n=0}^{\infty} u_n = \sum_{n=0}^{\infty}\frac{\partial^2 u_n}{\partial x^2}.$$
+
+<p>This is really a question of whether the two limit processes (difference quotient limit for derivative and partial sum limit for series convergence) commute — which we should <strong>not</strong> assume always works! We'll see a counterexample today! (This bad behavior can't occur for the PDE contexts we consider, where boundary conditions ensure things work out as expected.)</p>
+
+<p class="page-num">9/26</p>
+</div>
+</section>
+
+<!-- Slide 10 -->
+<section>
+<h3>Power Series Term-by-Term Differentiation</h3>
+
+<div class="slide">
+<p><strong>Theorem:</strong> Provided $\limsup_{n\to\infty} |a_n|^{1/n} =: R^{-1} < \infty$, the power series</p>
+
+$$\sum_{n=0}^{\infty} a_n(x-c)^n$$
+
+<p>is differentiable for $c - R < x < c + R$ with derivative given by</p>
+
+$$\sum_{n=1}^{\infty} n\,a_n(x-c)^{n-1},$$
+
+<p>and the derivative series has the same radius of convergence.</p>
+
+<p>This follows from the uniform convergence of power series within their interval of convergence, discussed in Math 312/403.</p>
+
+<p class="page-num">10/26</p>
+</div>
+</section>
+
+<!-- Slide 11 -->
+<section>
+<div class="slide">
+<p>Carefully calculating derivatives of Fourier series requires integration by parts to match the corresponding coefficients (see line 3.4.11 in textbook), requiring we keep track of any discontinuities / deal with boundary terms.</p>
+
+<p>Even if $f$ and $f'$ are continuous, if $f$ isn't periodic then its periodic extension will have jump discontinuities, leading to the derivative calculation being more involved than simple "term-by-term" (see 3.4.13).</p>
+
+<div class="annotation pink">
+3rd column reference formulas: For $f(x) = x$ on $[-L, L]$: $a_0 = \frac{1}{2L}\int_{-L}^{L} x\,dx = 0$ (odd integrand), $a_n = \frac{1}{L}\int_{-L}^{L} x\cos\!\left(\frac{n\pi x}{L}\right)dx = 0$ (odd × even = odd).
+</div>
+
+<p class="page-num">11/26</p>
+</div>
+</section>
+
+<!-- Slide 12 -->
+<section id="counterexample">
+<h2>Counterexample</h2>
+
+<div class="slide">
+<p>Since $f(x) = x$ is odd, its Fourier series on $[-L, L]$ consists of sines only:</p>
+
+$$x \sim 2\sum_{n=1}^{\infty}\frac{L}{n\pi}(-1)^{n+1}\sin\!\left(\frac{n\pi x}{L}\right).$$
+
+<div class="annotation">
+$f(x) = x$ is odd: $f(-x) = -f(x)$ for all $x$. So $a_n = 0$ for all $n$. Compute $b_n$ by integration by parts.
+</div>
+
+<p>By Fourier's theorem, we have</p>
+
+$$x = 2\sum_{n=1}^{\infty}\frac{L}{n\pi}(-1)^{n+1}\sin\!\left(\frac{n\pi x}{L}\right), \quad -L < x < L.$$
+
+<p>The derivative $\dfrac{d}{dx}x = 1$ satisfies $1 \sim 1$, but the term-by-term derivative</p>
+
+$$2\sum_{n=1}^{\infty}(-1)^{n+1}\cos\!\left(\frac{n\pi x}{L}\right)$$
+
+<p class="emphasis">diverges everywhere since the terms don't approach zero!</p>
+
+<div class="annotation">
+The periodic extension of $x$ from $[-L,L]$ has jumps at $x = \pm L, \pm 3L, \ldots$ — these jumps (from $L$ down to $-L$) cause the divergence of the differentiated series.
+</div>
+
+<figure style="margin:1rem 0; text-align:center;">
+  <img src="fig_sawtooth.png" alt="Sketch of the periodic extension of f(x)=x showing a sawtooth wave with jumps from L to -L at x = ±L, ±3L, etc. The jumps are marked." style="max-width:50%; border:1px solid #e0ddd5; border-radius:4px;">
+  <figcaption>Periodic extension of $f(x) = x$: a sawtooth wave with jumps at odd multiples of $L$.</figcaption>
+</figure>
+
+<p class="page-num">12/26</p>
+</div>
+</section>
+
+<!-- Slide 13 -->
+<section>
+<div class="slide">
+<p>Note that even if we focus on a small interval containing $x = 0$, far away from the "periodicity problem", we still have issues with convergence of the series!</p>
+
+<p>This contrasts with the <strong>power series</strong> context, in which the Taylor series for $f(x)$ centered at $a$ only involves $f(a), f'(a), f''(a), \ldots$ which are defined by the values of $f$ on any (as small as we wish) neighborhood of $a$ — that is, Taylor series use only <strong>"local"</strong> information about $f$.</p>
+
+<p>The Fourier coefficients use the values of $f$ on all of $[-L, L]$, so take into account the <strong>"global"</strong> behavior. Discontinuities of $f_p$ away from a value $x_0$ can cause the Fourier series to diverge at $x_0$, as seen in the previous example.</p>
+
+<p class="page-num">13/26</p>
+</div>
+</section>
+
+<!-- Slide 14 -->
+<section id="sufficient">
+<h2>Sufficient Condition for Fourier Series Term-by-Term Differentiation</h2>
+
+<div class="slide">
+<p><strong>Theorem:</strong> If $f(x)$ has a <em>continuous</em> Fourier series and $f'(x)$ is piecewise smooth, then the Fourier series for $f'(x)$ is the term-by-term derivative of the Fourier series for $f(x)$.</p>
+
+<div class="annotation pink">
+"Continuous Fourier series" means the Fourier series converges to a continuous function — guaranteed by Fourier's theorem when $f$ is continuous and $f(-L) = f(L)$.
+</div>
+
+<p><strong>Combining with Fourier's theorem:</strong> If $f(x)$ is a continuous piecewise smooth function that satisfies $f(-L) = f(L)$, then its Fourier series is continuous by Fourier's theorem. Therefore, its Fourier series can be differentiated term-by-term to obtain the Fourier series for $f'(x)$.</p>
+
+<div class="annotation orange">
+Need: $f$ continuous, $f'$ piecewise smooth, and $f(-L) = f(L)$ so the periodic extension stays continuous.
+</div>
+
+<p>This justifies the partial derivatives for "infinitely superimposed solutions" with respect to whichever variable we used for the Fourier expansion, at least for the periodic boundary condition case (third column in the reference sheet).</p>
+
+<p class="page-num">14/26</p>
+</div>
+</section>
+
+<!-- Slide 15 -->
+<section>
+<div class="slide">
+<p><strong>Theorem:</strong> The Fourier series of a continuous function $u(x,t)$ (where we think of $t$ as a parameter)</p>
+
+$$u(x,t) = a_0(t) + \sum_{n=1}^{\infty}\left(a_n(t)\cos\frac{n\pi x}{L} + b_n(t)\sin\frac{n\pi x}{L}\right)$$
+
+<p>satisfies</p>
+
+$$\frac{\partial u}{\partial t}(x,t) \sim a_0'(t) + \sum_{n=1}^{\infty}\left(a_n'(t)\cos\frac{n\pi x}{L} + b_n'(t)\sin\frac{n\pi x}{L}\right)$$
+
+<p>provided $\dfrac{\partial u}{\partial t}$ is piecewise smooth.</p>
+
+<p class="page-num">15/26</p>
+</div>
+</section>
+
+<!-- Slide 16 -->
+<section id="sine-series">
+<h2>Fourier Sine Series on $[0, L]$</h2>
+
+<div class="slide">
+<p>For $f$ piecewise smooth, we write</p>
+
+$$f(x) \sim \sum_{n=1}^{\infty} B_n\sin\!\left(\frac{n\pi x}{L}\right)$$
+
+<p>to mean</p>
+
+$$B_n := \frac{2}{L}\int_0^L f(x)\sin\!\left(\frac{n\pi x}{L}\right)dx.$$
+
+<p>In general, this Fourier sine series converges to the average of jumps for $0 < x < L$, and $0$ for $x = 0, L$. However, if $f$ is continuous, with $f'$ piecewise smooth, and $f(0) = f(L) = 0$, then</p>
+
+<div class="eq-box">
+$$f(x) = \sum_{n=1}^{\infty} B_n\sin\!\left(\frac{n\pi x}{L}\right) \quad \text{for all } 0 \le x \le L,$$
+</div>
+
+<p>and can be differentiated term-by-term provided $f'(x)$ is piecewise smooth — that is, the BC in the <strong>first column</strong> on the reference sheet guarantee the expected derivative behavior.</p>
+
+<p class="page-num">16/26</p>
+</div>
+</section>
+
+<!-- Slide 17 -->
+<section>
+<div class="slide">
+<p>For a general piecewise-smooth $f(x)$ and for $x$ outside of $[0, L]$, the Fourier sine series converges to the average of the one-sided limits of $f_{p,\text{odd}}(x)$, which is the <span class="emphasis">odd $2L$-periodic extension</span> of $f(x)$ from $[0, L]$.</p>
+
+<p>Starting with $f(x)$ defined on $[0, L]$, define</p>
+
+$$f_{\text{odd}}(x) = \begin{cases} f(x) & 0 < x < L \\ -f(-x) & -L < x < 0 \end{cases},$$
+
+<p>and then construct the $2L$-periodic extension of the above to obtain a function $f_{p,\text{odd}}(x)$ that is odd and $2L$-periodic.</p>
+
+<figure style="margin:1rem 0; text-align:center;">
+  <img src="fig_odd_periodic.png" alt="Graph of the odd 2L-periodic extension of f(x) from [0,L]. Shows the function reflected oddly to [-L,0] then tiled with period 2L, with open/closed dots at jump points at ±L, ±3L. Annotations mark -3L, -L, 3L and show f_{p,odd}(L±) agree." style="max-width:85%; border:1px solid #e0ddd5; border-radius:4px;">
+  <figcaption>The odd $2L$-periodic extension $f_{p,\text{odd}}(x)$, with jumps possible at integer multiples of $L$.</figcaption>
+</figure>
+
+<div class="annotation green">
+$f(0) = 0$ guarantees $f_{\text{odd}}(0^\pm)$ agree (both zero). $f(L) = 0$ guarantees $f_{p,\text{odd}}(L^\pm)$ agree.
+</div>
+
+<p><strong>Theorem:</strong> If $f(x)$ is continuous on $[0, L]$ and $f(0) = f(L) = 0$, then $f_{p,\text{odd}}(x)$ is continuous on $\mathbb{R}$.</p>
+
+<figure style="margin:1rem 0; text-align:center;">
+  <img src="fig_odd_continuous_case.png" alt="Sketch of a continuous odd periodic extension when f(0)=f(L)=0, showing a smooth wave without jumps." style="max-width:55%; border:1px solid #e0ddd5; border-radius:4px;">
+  <figcaption>When $f(0) = f(L) = 0$, the odd periodic extension is continuous on $\mathbb{R}$.</figcaption>
+</figure>
+
+<p class="page-num">17/26</p>
+</div>
+</section>
+
+<!-- Slide 18 -->
+<section id="cosine-series">
+<h2>Fourier Cosine Series on $[0, L]$</h2>
+
+<div class="slide">
+<p>Similarly, for $f$ piecewise smooth, we write</p>
+
+$$f(x) \sim \sum_{n=0}^{\infty} A_n\cos\!\left(\frac{n\pi x}{L}\right)$$
+
+<p>to mean</p>
+
+$$A_0 := \frac{1}{L}\int_0^L f(x)\,dx, \qquad A_n := \frac{2}{L}\int_0^L f(x)\cos\!\left(\frac{n\pi x}{L}\right)dx.$$
+
+<p>In general, this Fourier cosine series converges to the average of jumps for $0 < x < L$, with $x = 0, L$ convergence guaranteed. Therefore, if $f$ is continuous and $f'$ is piecewise smooth, then</p>
+
+<div class="eq-box">
+$$f(x) = \sum_{n=0}^{\infty} A_n\cos\!\left(\frac{n\pi x}{L}\right) \quad \text{for all } 0 \le x \le L,$$
+</div>
+
+<p>and can be differentiated term-by-term provided $f'(x)$ is piecewise smooth — that is, the BC for the <strong>second column</strong> of the reference sheet guarantee the expected derivative behavior.</p>
+
+<p class="page-num">18/26</p>
+</div>
+</section>
+
+<!-- Slide 19 -->
+<section>
+<div class="slide">
+<p>For a general piecewise-smooth $f(x)$ and for $x$ outside of $[0, L]$, the Fourier cosine series converges to the average of the one-sided limits of $f_{p,\text{even}}(x)$, which is the <span class="emphasis">even $2L$-periodic extension</span> of $f(x)$ from $[0, L]$.</p>
+
+<p>Starting with $f(x)$ defined on $[0, L]$, define</p>
+
+$$f_{\text{even}}(x) = \begin{cases} f(x) & 0 < x < L \\ f(-x) & -L < x < 0 \end{cases},$$
+
+<p>and then construct the $2L$-periodic extension of the above to obtain a function $f_{p,\text{even}}(x)$ that is even and $2L$-periodic.</p>
+
+<figure style="margin:1rem 0; text-align:center;">
+  <img src="fig_even_periodic.png" alt="Graph of the even 2L-periodic extension of f(x) from [0,L]. Shows f reflected evenly to [-L,0] (creating a V-shape or symmetric curve), with annotation f_even(x) and marks at -L and L. Annotation: 2L-periodic extension." style="max-width:70%; border:1px solid #e0ddd5; border-radius:4px;">
+  <figcaption>The even $2L$-periodic extension $f_{p,\text{even}}(x)$: reflect $f$ evenly to $[-L,0]$, then tile with period $2L$.</figcaption>
+</figure>
+
+<p><strong>Theorem:</strong> If $f(x)$ is continuous on $[0, L]$, then $f_{p,\text{even}}(x)$ is continuous on $\mathbb{R}$.</p>
+
+<figure style="margin:1rem 0; text-align:center;">
+  <img src="fig_even_continuous_case.png" alt="Sketch of a continuous even periodic extension, showing smooth cusps at the tiling points but no jumps." style="max-width:55%; border:1px solid #e0ddd5; border-radius:4px;">
+  <figcaption>The even periodic extension is always continuous (no extra conditions needed at endpoints).</figcaption>
+</figure>
+
+<div class="annotation orange">
+Note that it is "easier for the even periodic extension to be continuous" — the extra conditions $f(0) = f(L) = 0$ were needed to guarantee the <em>odd</em> periodic extension didn't introduce jumps!
+</div>
+
+<p class="page-num">19/26</p>
+</div>
+</section>
+
+<!-- Slide 20 -->
+<section>
+<div class="slide">
+<p>These theorems guarantee our "infinite linear combinations of product solutions" in fact solve the PDEs we've been studying, since we always have suitable BC to avoid the pathological cases.</p>
+
+<div class="annotation orange">
+Having $f_{p,\text{even}}(x)$ differentiable everywhere is needed to justify 2 derivatives. Need $f'(0) = f'(L) = 0$ for that.
+</div>
+
+<p>(It turns out for the heat equation that discontinuous initial conditions are immediately smoothed for $t > 0$, something we may explore with Fourier transforms later, so even if the initial data has jumps in the interior of the spatial interval, the continuity requirements for $u$ and $\dfrac{\partial u}{\partial x}$ are immediately satisfied for positive times.)</p>
+
+<p>The text has some details of the proofs assuming Fourier's theorem, as well as consequences of uniform convergence of Fourier series of continuous periodic functions whose derivatives are piecewise continuous (not discussed in detail in our text, but see e.g. <em>Real Analysis</em> by Carothers Chapters 10, 15 for more details.)</p>
+
+<p class="page-num">20/26</p>
+</div>
+</section>
+
+<!-- Slide 21–22 -->
+<section id="integration">
+<h2>Integration Is Better Behaved Than Differentiation</h2>
+
+<div class="slide">
+<p>Regarding the power series discussion earlier, convergence is guaranteed to be absolute for $c - R < x < c + R$ for both the series and its derivative. Both diverge for $x$ strictly outside; a convergent endpoint might be divergent for the derivative series.</p>
+
+<p>Integration term-by-term for power series can also be done, and cannot change $R$ either. However, <strong>divergent endpoints might become convergent</strong> in the antiderivative series.</p>
+
+<div class="annotation orange">
+Differentiation can lose endpoint convergence; integration can gain it.
+</div>
+
+<p>This can be seen in the identities</p>
+
+$$\ln(1+x) = \sum_{n=1}^{\infty}\frac{(-1)^{n-1}x^n}{n} \quad \text{for } -1 < x \le 1$$
+
+<p>while</p>
+
+$$\frac{1}{1+x} = \sum_{n=0}^{\infty}(-1)^n x^n \quad \text{for } -1 < x < 1.$$
+
+<div class="annotation pink">
+The $\ln(1+x)$ series converges at $x = 1$ (by the alternating series test), but differentiating gives the geometric series which diverges at $x = 1$.
+</div>
+
+<p class="page-num">21/26</p>
+</div>
+
+<div class="slide">
+<p><strong>Theorem:</strong> A Fourier series for a piecewise smooth $f(x)$ can <strong>always</strong> be integrated term by term and the result is a <em>convergent</em> infinite series that always <em>converges to the integral of $f(x)$</em> for $-L \le x \le L$, even if the original Fourier series has jump discontinuities.</p>
+
+<p class="page-num">22/26</p>
+</div>
+</section>
+
+<!-- Slide 23 -->
+<section>
+<div class="slide">
+<div class="annotation pink">
+$\displaystyle\int\!\bigl(a_0 + \sum\cos + \sum\sin\bigr)\,dx = a_0\, x + \text{trig terms}$
+</div>
+
+<p>Thinking about how derivatives and antiderivatives work, for differentiation it's clear we're obtaining a Fourier series but for antiderivatives we'll have a <strong>linear term</strong> (not trigonometric!) if $a_0 \neq 0$. This is why we didn't assert that the term-by-term antiderivative of the Fourier series always converges to the Fourier series of the antiderivative.</p>
+
+<div class="annotation">
+Example: sine series on $[0,L]$ for $f(x) = 1$: $B_n = \frac{2}{L}\int_0^L \sin\!\left(\frac{n\pi x}{L}\right)dx = \frac{-2}{n\pi}\bigl(\cos(n\pi) - 1\bigr)$, which equals $\frac{4}{n\pi}$ for $n$ odd and $0$ for $n$ even.
+</div>
+
+<p class="page-num">23/26</p>
+</div>
+</section>
+
+<!-- Slide 24–25 -->
+<section id="application">
+<h2>Fun Application: The Basel Problem</h2>
+
+<div class="slide">
+<p>Easy Math 140 calculation shows</p>
+
+$$1 \sim \frac{4}{\pi}\left(\sin\frac{\pi x}{L} + \frac{1}{3}\sin\frac{3\pi x}{L} + \frac{1}{5}\sin\frac{5\pi x}{L} + \cdots\right),$$
+
+<p>where we need to write $\sim$ since this is only equal for $0 < x < L$.</p>
+
+<p><strong>Integrate term by term</strong> from $0$ to $x$ and use the result to deduce</p>
+
+$$x = \frac{4L}{\pi^2}\left(1 + \frac{1}{3^2} + \frac{1}{5^2} + \cdots\right) - \frac{4L}{\pi^2}\left(\cos\frac{\pi x}{L} + \frac{1}{3^2}\cos\frac{3\pi x}{L} + \frac{1}{5^2}\cos\frac{5\pi x}{L} + \cdots\right)$$
+
+<p>for all $0 \le x \le L$. Take average value on $[0, L]$ to deduce</p>
+
+$$\frac{L}{2} = \frac{4L}{\pi^2}\left(1 + \frac{1}{3^2} + \frac{1}{5^2} + \cdots\right)$$
+
+<p>so</p>
+
+<div class="eq-box">
+$$x = \frac{L}{2} - \frac{4L}{\pi^2}\left(\cos\frac{\pi x}{L} + \frac{1}{3^2}\cos\frac{3\pi x}{L} + \frac{1}{5^2}\cos\frac{5\pi x}{L} + \cdots\right)$$
+</div>
+
+<p>for all $0 \le x \le L$.</p>
+
+<p class="page-num">24/26</p>
+</div>
+
+<div class="slide">
+<p><strong>Upcoming homework problem:</strong> calculate</p>
+
+$$\sum_{n=1}^{\infty}\frac{1}{n^2}$$
+
+<div class="annotation pink">
+The answer is $\dfrac{\pi^2}{6} = \zeta(2)$.
+</div>
+
+<p>by evaluating the above at $x = 0$. <em>Hint:</em> You'll first find</p>
+$$\sum_{\substack{n \ge 1 \\ n\;\text{odd}}}\frac{1}{n^2},$$
+
+<p>then think carefully how</p>
+$$\sum_{\substack{n \ge 1 \\ n\;\text{odd}}}\frac{1}{n^2}, \quad \sum_{\substack{n \ge 1 \\ n\;\text{even}}}\frac{1}{n^2}, \quad \sum_{n=1}^{\infty}\frac{1}{n^2}$$
+
+<p>are related.</p>
+
+<p>The value of this sum is the solution of the <strong>"Basel problem"</strong> posed by the Bernoullis and originally solved by Euler (1735), but not using this Fourier series approach (which Fourier introduced later in 1822).</p>
+
+<p class="page-num">25/26</p>
+</div>
+</section>
+
+<!-- Slide 26 -->
+<section>
+<div class="slide">
+<p>It turns out</p>
+
+$$\sum_{n=1}^{\infty}\frac{1}{n^{\text{even}}}$$
+
+<p>are the well understood <span class="italic-term">Bernoulli numbers</span>, while the odd case is not nearly as well understood. For complex $s$, we can define</p>
+
+$$\zeta(s) := \sum_{n=1}^{\infty}\frac{1}{n^s},$$
+
+<p>the <span class="emphasis">Riemann-Zeta function</span> — proving where the zeros are in the complex plane is literally a million dollar question. This is the realm of analytic number theory.</p>
+
+<div class="annotation orange">
+$\zeta(3)$ is irrational (Apéry, 1979). At least one of $\zeta(5), \zeta(7), \zeta(9), \zeta(11)$ must be irrational too (Zudilin, 2001), but we're not sure which one.
+</div>
+
+<p class="page-num">26/26</p>
+</div>
+</section>
+
+</body>
+</html>

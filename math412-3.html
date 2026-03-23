@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math 412 — Section 2.5: Laplace's Equation in a Rectangle &amp; Disk</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']],
+    macros: {
+      pd: ['\\frac{\\partial #1}{\\partial #2}', 2],
+      pdd: ['\\frac{\\partial^2 #1}{\\partial #2^2}', 2],
+    }
+  },
+  options: { enableMenu: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf7;
+    --text: #1a1a1a;
+    --accent: #2b3a8e;
+    --accent2: #b5232a;
+    --annot: #c4197a;
+    --annot-bg: #fdf0f6;
+    --annot-border: #e88abf;
+    --blue-annot: #1a5fb4;
+    --green-annot: #1a7a2e;
+    --orange-annot: #d45e00;
+    --heading-bg: #2b3a8e;
+    --heading-fg: #fff;
+    --card-bg: #fff;
+    --card-border: #d8d8d0;
+    --code-bg: #f0efe8;
+    --slide-border: #bbb;
+    --toc-bg: #f4f3ee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans 3', 'Helvetica Neue', sans-serif;
+  }
+
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 2rem;
+    margin-bottom: 2rem;
+    background: var(--heading-bg);
+    color: var(--heading-fg);
+    border-radius: 8px;
+  }
+  header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem; }
+  header p { font-size: 1.1rem; opacity: 0.9; font-family: 'Crimson Pro', serif; }
+
+  nav.toc {
+    background: var(--toc-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  nav.toc h2 { font-size: 1.1rem; margin-bottom: 0.6rem; color: var(--accent); }
+  nav.toc ol { padding-left: 1.3rem; }
+  nav.toc li { margin-bottom: 0.25rem; font-size: 0.95rem; font-family: 'Source Sans 3', sans-serif; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  section {
+    margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--heading-fg);
+    background: var(--heading-bg);
+    padding: 0.55rem 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 1.5rem 0 0.6rem;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.2rem;
+    display: inline-block;
+  }
+
+  p { margin-bottom: 0.9rem; }
+
+  .math-block {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+
+  .bvp-system {
+    background: var(--card-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+
+  /* Annotation boxes — styled to stand out as handwritten notes */
+  .annotation {
+    background: var(--annot-bg);
+    border: 2px dashed var(--annot-border);
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin: 0.8rem 0;
+    font-style: italic;
+    color: var(--annot);
+    font-size: 0.95rem;
+    position: relative;
+  }
+  .annotation::before {
+    content: '✏️ Annotation:';
+    font-weight: 600;
+    font-style: normal;
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .annotation.blue {
+    background: #eef3fd;
+    border-color: #7fa8e0;
+    color: var(--blue-annot);
+  }
+  .annotation.blue::before { color: var(--blue-annot); }
+  .annotation.red {
+    background: #fdf0ef;
+    border-color: #e08a7f;
+    color: var(--accent2);
+  }
+  .annotation.red::before { color: var(--accent2); }
+  .annotation.green {
+    background: #effbf0;
+    border-color: #7fc08a;
+    color: var(--green-annot);
+  }
+  .annotation.green::before { color: var(--green-annot); }
+  .annotation.orange {
+    background: #fef5ec;
+    border-color: #e0a87f;
+    color: var(--orange-annot);
+  }
+  .annotation.orange::before { color: var(--orange-annot); }
+
+  .figure-caption {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .definition, .theorem, .remark {
+    background: var(--card-bg);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+  .definition {
+    border-left: 4px solid #2e7d32;
+  }
+  .theorem {
+    border-left: 4px solid var(--accent2);
+  }
+  .remark {
+    border-left: 4px solid var(--orange-annot);
+  }
+  .definition strong, .theorem strong, .remark strong {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+  }
+
+  .columns {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  .columns > div {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .superposition-diagram {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: center;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    overflow-x: auto;
+  }
+
+  .pde-type {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin: 0.8rem 0;
+  }
+  .pde-type h4 {
+    font-size: 1.05rem;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .slide-ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #999;
+    float: right;
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--card-border);
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 17px; padding: 1rem; }
+    header h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+    .columns { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Math 412</h1>
+  <p>Section 2.5: Solving Laplace's Equation in a Rectangle, Well-Posed Problems, &amp; Laplace's Equation in a Disk</p>
+</header>
+
+<nav class="toc" aria-label="Table of Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#sec-2d-laplace">Laplace's Equation in 2D</a></li>
+    <li><a href="#sec-rectangle">2D Laplace in a Rectangle with Prescribed Boundary Values</a></li>
+    <li><a href="#sec-superposition">Superposition of Solutions</a></li>
+    <li><a href="#sec-one-side">Solving with One Inhomogeneous Side</a></li>
+    <li><a href="#sec-hyp-trig">Hyperbolic Trigonometric Functions</a></li>
+    <li><a href="#sec-shifted-basis">Shifted Basis &amp; Applying the BC</a></li>
+    <li><a href="#sec-product-soln">Product Solutions &amp; Coefficient Formulas</a></li>
+    <li><a href="#sec-wellposedness">Well-Posedness</a></li>
+    <li><a href="#sec-illposed-laplace">IBVP for Laplace Equation Is Ill-Posed</a></li>
+    <li><a href="#sec-pde-types">Classification of Linear PDE Types</a></li>
+    <li><a href="#sec-illposed-backward">Backwards Heat Equation Is Ill-Posed</a></li>
+    <li><a href="#sec-polar">Laplacian in Polar Coordinates</a></li>
+    <li><a href="#sec-disk">Laplace's Equation in a Disk</a></li>
+    <li><a href="#sec-mean-value">Mean Value Property</a></li>
+    <li><a href="#sec-max-principle">Maximum Principle</a></li>
+  </ol>
+</nav>
+
+<!-- ======================================================== -->
+<section id="sec-2d-laplace">
+  <h2>1. Laplace's Equation in 2D</h2>
+  <span class="slide-ref">Slides 2</span>
+
+  <p>The problems we set up and solved for the 1D heat equation (zero-temperature ends, insulated ends, and a ring/periodic boundary conditions) were <strong>initial-boundary value problems (IBVP)</strong> on "half-infinite rectangles", e.g.</p>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \text{PDE:} & \pd{u}{t} = k\,\pdd{u}{x}, \quad 0 < x < L,\; t > 0 \\[6pt]
+    \text{BC:} & u(0,t) = u(L,t) = 0, \quad t > 0 \\[4pt]
+    \text{IC:} & u(x,0) = f(x), \quad 0 \le x \le L
+    \end{cases}
+    \]
+  </div>
+
+  <div class="annotation">
+    IBVP — solve for \(u(x,t)\) for \(0 < x < L\) and all \(t > 0\). The boundary conditions \(u(0,t)\) and \(u(L,t)\) are prescribed for \(t > 0\); the initial condition \(u(x,0) = f(x)\) is prescribed for \(0 \le x \le L\).
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-rectangle">
+  <h2>2. 2D Laplace in a Rectangle — Prescribed Boundary Values</h2>
+  <span class="slide-ref">Slide 3</span>
+
+  <p>For <em>well-posedness</em> related reasons (discussed later), we are <strong>not</strong> interested in solving the 2D Laplace equation on a half-infinite strip. Instead, we consider a <strong>"pure" BVP</strong> of the form:</p>
+
+  <div class="annotation red">
+    \(\nabla^2 u = 0\) — solve for \(u(x,y)\).
+  </div>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \text{PDE:} & \pdd{u}{x} + \pdd{u}{y} = 0, \quad 0 < x < L,\; 0 < y < H \\[6pt]
+    \text{BC1:} & u(0,y) = g_1(y), \quad 0 \le y \le H \\[4pt]
+    \text{BC2:} & u(L,y) = g_2(y), \quad 0 \le y \le H \\[4pt]
+    \text{BC3:} & u(x,0) = f_1(x), \quad 0 \le x \le L \\[4pt]
+    \text{BC4:} & u(x,H) = f_2(x), \quad 0 \le x \le L
+    \end{cases}
+    \]
+  </div>
+
+  <div class="annotation">
+    The rectangle has boundary data prescribed on all four sides: \(u = g_1\) on the left, \(u = g_2\) on the right, \(u = f_1\) on the bottom, \(u = f_2\) on the top. The rectangle has width \(L\) and height \(H\).
+  </div>
+
+  <p><em>Footnote:</em> If we wanted to think of \(y\) as "time", this would be an "initial-final" value problem — i.e., a boundary value problem.</p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-superposition">
+  <h2>3. Superposition of Solutions</h2>
+  <span class="slide-ref">Slide 4</span>
+
+  <p>The PDE is <strong>linear homogeneous</strong>, but the BC are <strong>not homogeneous</strong>.</p>
+
+  <p>Intuitively, the idea of superposition we used for the 1D heat equation can handle <em>"one inhomogeneity"</em> at a time, not four. We can <strong>superimpose superimposed solutions!</strong></p>
+
+  <div class="annotation">
+    \(\nabla^2 u_1 = \nabla^2 u_2 = \nabla^2 u_3 = \nabla^2 u_4 \equiv 0 \implies \nabla^2 u = 0\).
+  </div>
+
+  <div class="superposition-diagram" role="img" aria-label="Diagram showing how the full BVP decomposes into four sub-problems, each with one non-zero boundary side">
+    <p><strong>Figure 2.5.1 — Laplace's equation inside a rectangle (Superposition Decomposition)</strong></p>
+    <p style="margin-top:0.5rem;">
+      \(u = u_1 + u_2 + u_3 + u_4\)
+    </p>
+    <p style="font-size:0.9rem; margin-top:0.5rem;">
+      Each \(u_k\) solves \(\nabla^2 u_k = 0\) with <strong>one</strong> inhomogeneous boundary side and zeros on the other three:
+    </p>
+    <p style="font-size:0.88rem; line-height:1.8;">
+      \(u_1\): bottom = \(f_1(x)\), others = 0 &emsp;|&emsp;
+      \(u_2\): right = \(g_2(y)\), others = 0<br>
+      \(u_3\): top = \(f_2(x)\), others = 0 &emsp;|&emsp;
+      \(u_4\): left = \(g_1(y)\), others = 0
+    </p>
+  </div>
+
+  <p>That is,</p>
+  <div class="math-block">
+    \[
+    u(x,y) = u_1(x,y) + u_2(x,y) + u_3(x,y) + u_4(x,y)
+    \]
+  </div>
+  <p>solves the BVP with all four inhomogeneous boundary conditions.</p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-one-side">
+  <h2>4. Solving with One Inhomogeneous Side (\(u_4\))</h2>
+  <span class="slide-ref">Slides 5–6</span>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \text{PDE:} & \pdd{u_4}{x} + \pdd{u_4}{y} = 0, \quad 0 < x < L,\; 0 < y < H \\[6pt]
+    \text{BC1:} & u_4(0,y) = g_1(y), \quad 0 \le y \le H \\[4pt]
+    \text{BC2:} & u_4(L,y) = 0, \quad 0 \le y \le H \\[4pt]
+    \text{BC3:} & u_4(x,0) = 0, \quad 0 \le x \le L \\[4pt]
+    \text{BC4:} & u_4(x,H) = 0, \quad 0 \le x \le L
+    \end{cases}
+    \]
+  </div>
+
+  <h3>Separation of variables</h3>
+
+  <p>Set up a product solution ansatz:</p>
+  <div class="math-block">
+    \[
+    u_p(x,y) = h(x)\,\phi(y) \implies \frac{h''(x)}{h(x)} + \frac{\phi''(y)}{\phi(y)} = 0
+    \]
+  </div>
+
+  <div class="annotation red">
+    Note: \(\frac{\partial^2 u}{\partial x^2} = h''\phi\) and \(\frac{\partial^2 u}{\partial y^2} = h\phi''\). Then \(h''\phi + h\phi'' = 0\); dividing by \(h\phi\) gives the separated equation.
+  </div>
+
+  <p>Since one side depends only on \(x\) and the other only on \(y\), both must equal a constant:</p>
+  <div class="math-block">
+    \[
+    -\frac{h''(x)}{h(x)} = \frac{\phi''(y)}{\phi(y)} =: -\lambda
+    \]
+  </div>
+
+  <p>Ignoring the inhomogeneous BC for now (will be achieved via superposition later), we obtain the coupled ODE system:</p>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \phi''(y) = -\lambda\,\phi(y), & \phi(0) = \phi(H) = 0 \\[6pt]
+    h''(x) = \lambda\,h(x), & h(L) = 0
+    \end{cases}
+    \]
+  </div>
+
+  <div class="annotation blue">
+    The \(\phi\) equation with homogeneous Dirichlet BCs is the same eigenvalue problem from the heat equation.
+  </div>
+
+  <p>Recycling previous analysis for the heat equation, nontrivial \(\phi\) are given by</p>
+  <div class="math-block">
+    \[
+    \phi(y) = B\sin\!\left(\frac{n\pi y}{H}\right), \quad n = 1, 2, 3, \ldots
+    \]
+  </div>
+  <p>corresponding to \(0 < \lambda = \left(\frac{n\pi}{H}\right)^2\).</p>
+
+  <div class="annotation red">
+    Since \(\lambda > 0\), the equation \(h'' = \lambda h\) has characteristic polynomial \(r^2 - \left(\frac{n\pi}{H}\right)^2 = 0\), giving \(r = \pm\frac{n\pi}{H}\). So the characteristic roots are real.
+  </div>
+
+  <p>This guarantees real characteristic roots for the \(x\)-ODE:</p>
+  <div class="math-block">
+    \[
+    h(x) = c_1\,e^{n\pi x/H} + c_2\,e^{-n\pi x/H}, \qquad h(L) = 0.
+    \]
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-hyp-trig">
+  <h2>5. Hyperbolic Trigonometric Functions</h2>
+  <span class="slide-ref">Slides 7–9</span>
+
+  <div class="definition">
+    <strong>Definition (Hyperbolic Trig).</strong>
+    \[
+    \sinh(x) := \frac{e^x - e^{-x}}{2}, \qquad \cosh(x) := \frac{e^x + e^{-x}}{2}.
+    \]
+  </div>
+
+  <p>Key properties:</p>
+  <div class="columns">
+    <div>
+      <p>\(\sinh(x)\) is <strong>odd</strong>, \(\cosh(x)\) is <strong>even</strong>.</p>
+      <p>\(\sinh(0) = 0\), &ensp; \(\cosh(0) = 1\).</p>
+    </div>
+    <div>
+      <p>\(\frac{d}{dx}\sinh(x) = \cosh(x)\).</p>
+      <p>\(\frac{d}{dx}\cosh(x) = \sinh(x)\).</p>
+      <p>\(\cosh^2(x) - \sinh^2(x) = 1\).</p>
+    </div>
+  </div>
+
+  <p><strong>Connection via Euler's formula:</strong></p>
+  <div class="math-block">
+    \[
+    \cosh(ix) = \cos x, \qquad \sinh(ix) = i\sin(x).
+    \]
+  </div>
+
+  <h3>Why use hyperbolic trig?</h3>
+  <p>In the same way that</p>
+  \[
+  h''(x) = \underbrace{\lambda}_{<0}\,h(x) \implies h(x) = c_1\cos(\sqrt{-\lambda}\,x) + c_2\sin(\sqrt{-\lambda}\,x),
+  \]
+  <p>we have</p>
+  \[
+  h''(x) = \underbrace{\lambda}_{>0}\,h(x) \implies h(x) = c_1\cosh(\sqrt{\lambda}\,x) + c_2\sinh(\sqrt{\lambda}\,x).
+  \]
+
+  <p>We've changed the basis for the 2D solution space from \(\{e^{\sqrt{\lambda}\,x},\, e^{-\sqrt{\lambda}\,x}\}\) to \(\{\cosh(\sqrt{\lambda}\,x),\, \sinh(\sqrt{\lambda}\,x)\}\). This is more convenient for analyzing boundary values since \(\cosh(0) = 1\) and \(\sinh(0) = 0\).</p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-shifted-basis">
+  <h2>6. Shifted Basis &amp; Applying the BC</h2>
+  <span class="slide-ref">Slides 10–11</span>
+
+  <p>We can also <strong>shift</strong> the basis functions:</p>
+  <div class="math-block">
+    \[
+    h''(x) = \underbrace{\lambda}_{>0}\,h(x) \implies h(x) = c_1\cosh\!\bigl[\sqrt{\lambda}\,(x - x_0)\bigr] + c_2\sinh\!\bigl[\sqrt{\lambda}\,(x - x_0)\bigr]
+    \]
+  </div>
+  <p>for any \(x_0\). (Justified by linear ODE theory — any \(n\) linearly independent solutions span the full solution space; linear independence can be checked via the Wronskian.)</p>
+
+  <p>Therefore, instead of imposing a compatibility condition on \(c_1, c_2\) to satisfy \(h(L) = 0\) using exponentials, we choose \(x_0 = L\):</p>
+
+  <div class="math-block">
+    \[
+    h(x) = c_1\cosh\!\left(\frac{n\pi(x-L)}{H}\right) + c_2\sinh\!\left(\frac{n\pi(x-L)}{H}\right).
+    \]
+  </div>
+
+  <div class="annotation">
+    At \(x = L\): \(h(L) = c_1\cosh(0) + c_2\sinh(0) = c_1 \cdot 1 + c_2 \cdot 0 = c_1\). So \(h(L) = 0 \implies c_1 = 0\).
+  </div>
+
+  <p>Then</p>
+  <div class="math-block">
+    \[
+    h(L) = 0 \implies c_1 = 0 \implies h(x) = c\,\sinh\!\left(\frac{n\pi(x-L)}{H}\right)
+    \]
+  </div>
+  <p>is a nontrivial solution for any \(c\), since \(\sinh(0) = 0\). <em>(This was the whole point of using hyperbolic trig!)</em></p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-product-soln">
+  <h2>7. Product Solutions &amp; Coefficient Formulas</h2>
+  <span class="slide-ref">Slides 12–16</span>
+
+  <p>Nontrivial product solutions to the BVP (with three homogeneous BCs) are:</p>
+  <div class="math-block">
+    \[
+    u_p(x,y) = h(x)\,\phi(y) = B\sinh\!\left(\frac{n\pi(x-L)}{H}\right)\sin\!\left(\frac{n\pi y}{H}\right), \quad n = 1,2,\ldots
+    \]
+  </div>
+
+  <p>By superposition, the general solution is:</p>
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    u_4(x,y) = \sum_{n=1}^{\infty} B_n \sinh\!\left(\frac{n\pi(x-L)}{H}\right)\sin\!\left(\frac{n\pi y}{H}\right).
+    \]
+  </div>
+
+  <h3>Applying the inhomogeneous BC</h3>
+
+  <p>Recall BC1: \(u_4(0,y) = g_1(y)\). Setting \(x = 0\):</p>
+
+  <div class="math-block">
+    \[
+    g_1(y) = -\sum_{n=1}^{\infty} B_n\sinh\!\left(\frac{n\pi L}{H}\right)\sin\!\left(\frac{n\pi y}{H}\right)
+    \]
+  </div>
+
+  <div class="annotation">
+    Note: \(\sinh\!\bigl(\frac{n\pi(0 - L)}{H}\bigr) = \sinh\!\bigl(\frac{-n\pi L}{H}\bigr) = -\sinh\!\bigl(\frac{n\pi L}{H}\bigr)\) since \(\sinh\) is odd.
+  </div>
+
+  <p>Multiply both sides by \(\sin\!\left(\frac{m\pi y}{H}\right)\), integrate from \(0\) to \(H\), and use orthogonality:</p>
+
+  <div class="annotation blue">
+    Orthogonality relation (integers \(n,m \ge 1\)):
+    \(\displaystyle\int_0^H \sin\!\left(\frac{n\pi y}{H}\right)\sin\!\left(\frac{m\pi y}{H}\right)dy = \begin{cases} 0 & n \ne m \\ \frac{H}{2} & n = m\end{cases}\)
+  </div>
+
+  <p>Only the \(n = m\) term survives on the right, giving:</p>
+
+  <div class="math-block">
+    \[
+    \int_0^H g_1(y)\sin\!\left(\frac{m\pi y}{H}\right)dy = -B_m\sinh\!\left(\frac{m\pi L}{H}\right)\frac{H}{2}
+    \]
+  </div>
+
+  <p>Solving for \(B_m\):</p>
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    \boxed{\;B_m = \frac{-2}{H\sinh\!\left(\frac{m\pi L}{H}\right)}\int_0^H g_1(y)\sin\!\left(\frac{m\pi y}{H}\right)dy.\;}
+    \]
+  </div>
+
+  <h3>Alternative derivation using the reference table</h3>
+  <p>The Fourier sine series formula (renaming \(x \to y\) and \(L \to H\)) states:</p>
+  \[
+  f(y) = \sum_{n=1}^{\infty}\underbrace{B_n}_{\text{coeff}}\sin\!\left(\frac{n\pi y}{H}\right) \implies \underbrace{B_n}_{\text{coeff}} = \frac{2}{H}\int_0^H f(y)\sin\!\left(\frac{n\pi y}{H}\right)dy.
+  \]
+
+  <p>Identifying \(-B_n\sinh\!\left(\frac{n\pi L}{H}\right)\) as the Fourier coefficient of \(g_1(y)\) immediately yields the same result.</p>
+
+  <h3>Full solution</h3>
+  <p>This completes the solution for \(u_4(x,y)\). The same idea is applied for \(u_1, u_2, u_3\), so that:</p>
+  <div class="math-block">
+    \[
+    u(x,y) = u_1(x,y) + u_2(x,y) + u_3(x,y) + u_4(x,y)
+    \]
+  </div>
+  <p>solves the full BVP with all four inhomogeneous boundary conditions.</p>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-wellposedness">
+  <h2>8. Well-Posedness</h2>
+  <span class="slide-ref">Slides 15–16 (original numbering)</span>
+
+  <div class="definition">
+    <strong>Definition (Well-Posed Problem).</strong> A problem is <em>well-posed</em> when:
+    <ol style="margin:0.4rem 0 0 1.3rem;">
+      <li>There <strong>exists</strong> a solution. <span style="color:var(--annot);">(existence of solutions)</span></li>
+      <li>The solution is <strong>unique</strong>. <span style="color:var(--annot);">(uniqueness of solutions)</span></li>
+      <li>The solution depends <strong>continuously</strong> on the inhomogeneous data. <span style="color:var(--annot);">(continuous dependence on data)</span></li>
+    </ol>
+  </div>
+
+  <p>The first two items indicate "we understand the natural laws governing this scenario," and the third means our understanding is stable with respect to unavoidable measurement errors.</p>
+
+  <div class="annotation">
+    PDEs that break condition #3 exhibit <strong>discontinuous dependence on data</strong> — small perturbations in the data lead to huge changes in the solution.
+  </div>
+
+  <div class="remark">
+    <strong>Chaos ≠ Ill-Posed!</strong> Chaos involves:
+    (1) aperiodic long-term behavior, (2) in a deterministic system, (3) exhibiting sensitive (but <em>continuous</em>) dependence on initial data, so predictions at \(t = O(1)\) are useless.
+    <br><br>
+    Examples: the double pendulum and the Lorenz system (3 ODEs modeling convection rolls). Turbulent fluid flow (Navier–Stokes with boundary effects) seems to be PDE chaos, but well-posedness for nonlinear fluid PDEs is a <strong>million-dollar question</strong> (Clay Millennium Problem).
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-illposed-laplace">
+  <h2>9. IBVP for Laplace Equation Is Ill-Posed</h2>
+  <span class="slide-ref">Slides 17–18</span>
+
+  <p>Consider the following IBVP on the half-strip \((0,\pi)\times(0,\infty)\) with \(L = \pi\):</p>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \pdd{u_n}{t} + \pdd{u_n}{x} = 0, & 0 < x < L,\; t > 0 \\[6pt]
+    u_n(0,t) = u_n(\pi,t) = 0, & t > 0 \\[4pt]
+    u_n(x,0) = 0, & 0 \le x \le L \\[4pt]
+    \pd{u_n}{t}(x,0) = f_n(x) := \frac{1}{n}\sin(nx), & 0 \le x \le L
+    \end{cases}
+    \]
+  </div>
+
+  <p>(Unique) solutions are:</p>
+  <div class="math-block">
+    \[
+    u_n(x,t) = \frac{1}{n^2}\sin(nx)\sinh(nt).
+    \]
+  </div>
+
+  <div class="annotation red">
+    As \(n \to \infty\): the data \(f_n(x) = \frac{1}{n}\sin(nx) \to 0\) for all \(x\) (oscillates between \(\pm 1/n\)).
+  </div>
+
+  <p>The unique solution to the problem with <strong>zero data</strong> \(f \equiv 0\) is \(u(x,t) \equiv 0\).</p>
+
+  <p>However, as \(n \to \infty\), \(u_n\) takes on <strong>arbitrarily large positive and negative values</strong> for all positive times (for any \(T >0, \lim_{n \to \infty} \frac{\sinh(nt)}{n^2} \rightarrow + \infty\) since \(\sinh(\cdot)\) involves exponential growth). Therefore, the solutions do <strong>not</strong> depend continuously on the data \(f\) near "\((f,u) \equiv (0,0)\)."</p>
+
+  <div class="annotation orange">
+    The data \(f_n \to 0\), but the corresponding solutions \(u_n(x,t) \not\to u(x,t) = 0\). In fact, \(u_n\) blows up! This is the hallmark of ill-posedness.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-pde-types">
+  <h2>10. Classification of Linear PDE Types</h2>
+  <span class="slide-ref">Slides 21–23</span>
+
+  <div class="pde-type">
+    <h4>▸ Parabolic — prototype: heat equation</h4>
+    \[\pd{u}{t} = k\nabla^2 u\]
+    <p>IBVPs are well-posed <em>forward in time</em>. Infinite speed of propagation. Space-time mean value properties. Maximum principles.</p>
+    <p><strong>Symbol:</strong> \(P(\tau,\xi) = \tau - k\xi^2\); level sets are <em>parabolas</em>.</p>
+  </div>
+
+  <div class="pde-type">
+    <h4>▸ Elliptic — prototype: Laplace's equation</h4>
+    \[\nabla^2 u = 0\]
+    <p><strong>Boundary value problems</strong> are well-posed; initial value problems are <strong>not</strong>. Mean value property. Maximum principles.</p>
+    <p><strong>Symbol:</strong> \(P(\xi,\eta) = \xi^2 + \eta^2\); level sets are <em>ellipses</em> (circles).</p>
+  </div>
+
+  <div class="pde-type">
+    <h4>▸ Hyperbolic — prototype: wave equation</h4>
+    \[\pdd{u}{t} = c^2\nabla^2 u\]
+    <p>IBVPs are well-posed <em>forward and backward in time</em>. Finite speed of propagation.</p>
+    <p><strong>Symbol:</strong> \(P(\tau,\xi) = \tau^2 - c^2\xi^2\); level sets are <em>hyperbolas</em>.</p>
+  </div>
+
+  <p>The nomenclature comes from treating the PDE operators as polynomials and examining the level sets of the resulting "symbol."  Rearrange the PDE to be of the form \( Pu = 0\), where \(P\) is a polynomial differential operator.  Then, in the above replace \( \frac{\partial}{\partial t} \to \tau, \frac{\partial}{\partial x} \to \xi, \frac{\partial}{\partial y}\to \eta.\)</p>
+
+  <div class="remark">
+    <strong>Nonlinear equations:</strong> There isn't a single precise definition to classify type in every context; often a nonlinear equation is classified (e.g., as hyperbolic) by establishing some of the qualitative properties that type tends to have.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-illposed-backward">
+  <h2>11. Backwards Heat Equation Is Ill-Posed</h2>
+  <span class="slide-ref">Slides 24–25</span>
+
+  <div class="annotation red">
+    Separation of variables: \(u = \phi(x)G(t)\) gives \(\phi'' = -\lambda\phi\), \(\phi(0)=\phi(\pi)=0\) and \(G' = k\lambda G\) (note positive sign — growth!). Compare to the forward heat equation where \(G' = -k\lambda G\) (decay).
+  </div>
+
+  <p>Consider the <strong>backward</strong> heat equation (\(L = \pi\)):</p>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \pd{u_n}{t} = -k\,\pdd{u_n}{x}, & 0 < x < L,\; t > 0 \\[6pt]
+    u_n(0,t) = u_n(\pi,t) = 0, & t > 0 \\[4pt]
+    u_n(x,0) = \frac{1}{n}\sin(nx), & 0 \le x \le L
+    \end{cases}
+    \]
+  </div>
+
+  <p>(Unique) solutions:</p>
+  <div class="math-block">
+    \[
+    u_n(x,t) = \frac{1}{n}\sin(nx)\,e^{kn^2 t}.
+    \]
+  </div>
+
+  <div class="annotation orange">
+    The initial data is just one eigenfunction \(\frac{1}{n}\sin(nx)\), which goes to zero pointwise. As \(n \to \infty \) solution \(u_n(x,t)\) takes on arbitrarily large positive and negative values for any \(T>0\): fix any \(T > 0\): \(\lim_{n\to\infty}\frac{e^{kn^2 T}}{n} \to \infty\).
+  </div>
+
+  <p>As \(n \to \infty\), \(f_n(x) \to 0\) for all \(x\), but the solutions blow up for any \(t > 0\). Same argument as before: the unique solution for zero data is identically zero, but \(u_n\) does not converge to it. The backward heat equation is <strong>ill-posed</strong>.</p>
+
+  <div class="annotation">
+    This is "more difficult" than the forward heat equation: forward heat equation has exponential <em>decay</em> \(e^{-kn^2t}\), backward has exponential <em>growth</em> \(e^{kn^2t}\).
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-polar">
+  <h2>12. Laplacian in Polar Coordinates</h2>
+  <span class="slide-ref">Slides 28–29</span>
+
+  <div class="annotation green">
+    Coordinate transformation: \((x,y) \to (r,\theta)\) where \(x = r\cos\theta\), \(y = r\sin\theta\), and \(r = \sqrt{x^2+y^2}\), \(\tan\theta = y/x\).
+  </div>
+
+  <p>Using the multivariable chain rule:</p>
+
+  <div class="math-block">
+    \[
+    \pd{}{x} = \cos\theta\,\pd{}{r} - \frac{\sin\theta}{r}\,\pd{}{\theta}
+    \]
+  </div>
+  <div class="math-block">
+    \[
+    \pd{}{y} = \sin\theta\,\pd{}{r} + \frac{\cos\theta}{r}\,\pd{}{\theta}
+    \]
+  </div>
+
+  <p>Squaring each and adding (after careful computation where cross terms cancel):</p>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    \nabla^2 = \pdd{}{r} + \frac{1}{r}\pd{}{r} + \frac{1}{r^2}\pdd{}{\theta}
+    = \frac{1}{r}\pd{}{r}\!\left(r\pd{}{r}\right) + \frac{1}{r^2}\pdd{}{\theta}
+    \]
+  </div>
+
+  <div class="annotation green">
+    Expanding \(\frac{1}{r}\frac{\partial}{\partial r}\!\left(r\frac{\partial u}{\partial r}\right) = \frac{1}{r}\!\left(1\cdot\frac{\partial u}{\partial r} + r\,\frac{\partial^2 u}{\partial r^2}\right) = \frac{1}{r}\frac{\partial u}{\partial r} + \frac{\partial^2 u}{\partial r^2}\).
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-disk">
+  <h2>13. Laplace's Equation in a Disk</h2>
+  <span class="slide-ref">Slides 29–35</span>
+
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \nabla^2 u = \dfrac{1}{r}\pd{}{r}\!\left(r\pd{u}{r}\right) + \dfrac{1}{r^2}\pdd{u}{\theta} = 0, & 0 < r < a,\; -\pi < \theta \le \pi \\[10pt]
+    u(a,\theta) = f(\theta), & -\pi \le \theta \le \pi
+    \end{cases}
+    \]
+  </div>
+
+  <div class="annotation">
+    Interior of a disk of radius \(a\). The boundary condition is prescribed on the circle \(r = a\).
+  </div>
+
+  <h3>Coordinate boundary conditions</h3>
+
+  <p>The \(r = a\) boundary is physical. We also need conditions at the "coordinate boundaries" \(r = 0\) and \(\theta = \pm\pi\):</p>
+
+  <div class="annotation red">
+    The origin doesn't have a well-defined angle (up to \(\pm 2\pi\))! Polar coordinates are singular/degenerate at \(r = 0\) — the Laplacian is not defined there.
+  </div>
+
+  <p><strong>Boundedness at the origin:</strong></p>
+  <div class="math-block">\[|u(0,\theta)| < \infty.\]</div>
+
+  <p><strong>Periodicity ("perfect thermal contact"):</strong></p>
+  <div class="math-block">
+    \[
+    u(r,-\pi) = u(r,\pi), \qquad \pd{u}{\theta}(r,-\pi) = \pd{u}{\theta}(r,\pi).
+    \]
+  </div>
+
+  <h3>Separation of variables</h3>
+
+  <p>Product solutions \(u_p = \phi(\theta)\,G(r)\) satisfy:</p>
+  <div class="bvp-system">
+    \[
+    \begin{cases}
+    \phi''(\theta) = -\lambda\,\phi(\theta), & \phi(-\pi) = \phi(\pi),\; \phi'(-\pi) = \phi'(\pi) \\[6pt]
+    r^2G''(r) + rG'(r) = \lambda\,G(r), & |G(0)| < \infty
+    \end{cases}
+    \]
+  </div>
+
+  <div class="annotation blue">
+    The \(\phi\) BVP is the same periodic eigenvalue problem from the 1D circular ring! (3rd column on reference sheet, with \(L = \pi\).)
+  </div>
+
+  <p>Using previous analysis:</p>
+  <div class="math-block">
+    \[
+    \phi(\theta) = \sin(n\theta) \;\text{ or }\; \cos(n\theta), \quad \text{corresponding to } \lambda = n^2, \quad n = 0,1,2,\ldots
+    \]
+  </div>
+
+  <h3>The radial ODE — Cauchy–Euler equation</h3>
+
+  <div class="math-block">
+    \[r^2 G''(r) + rG'(r) - n^2 G(r) = 0.\]
+  </div>
+
+  <p>This is a <strong>variable-coefficient</strong> ODE, so the usual characteristic polynomial technique (constant coefficients only) doesn't work. However, it is an <strong>equidimensional</strong> (Cauchy–Euler) equation.</p>
+
+  <div class="annotation">
+    Ansatz \(G(r) = r^p\). Then \(G' = pr^{p-1}\), \(G'' = p(p-1)r^{p-2}\). Substituting: \(r^p\bigl[p(p-1) + p - n^2\bigr] = 0\), so \(p^2 - n^2 = 0 \implies p = \pm n\).
+  </div>
+
+  <p>For \(n \ge 1\): \(G(r) = c_1 r^n + c_2 r^{-n}\).</p>
+  <p>For \(n = 0\): \(G(r) = c_1 + c_2 \ln r\).</p>
+
+  <div class="annotation red">
+    Boundedness at origin \(|G(0)| < \infty\) requires \(c_2 = 0\) in all cases (both \(r^{-n}\) and \(\ln r\) blow up as \(r \to 0\)).
+  </div>
+
+  <h3>Full series solution</h3>
+
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    \boxed{\;u(r,\theta) = \sum_{n=0}^{\infty} A_n r^n \cos(n\theta) + \sum_{n=1}^{\infty} B_n r^n \sin(n\theta)\;}
+    \]
+  </div>
+
+  <p>Applying the boundary condition \(u(a,\theta) = f(\theta)\):</p>
+  <div class="math-block">
+    \[
+    f(\theta) = \sum_{n=0}^{\infty} A_n a^n \cos(n\theta) + \sum_{n=1}^{\infty} B_n a^n \sin(n\theta)
+    \]
+  </div>
+
+  <p>Standard orthogonality gives the coefficients:</p>
+  <div class="math-block" style="border-left: 4px solid var(--accent2);">
+    \[
+    A_0 = \frac{1}{2\pi}\int_{-\pi}^{\pi} f(\theta)\,d\theta
+    \]
+    \[
+    A_n a^n = \frac{1}{\pi}\int_{-\pi}^{\pi} f(\theta)\cos(n\theta)\,d\theta
+    \]
+    \[
+    B_n a^n = \frac{1}{\pi}\int_{-\pi}^{\pi} f(\theta)\sin(n\theta)\,d\theta
+    \]
+  </div>
+
+  <div class="remark">
+    <strong>On the Cauchy–Euler ODE:</strong> This is basically the only higher-order variable-coefficient ODE for which "nice" closed-form solutions exist. Typically, power series or Frobenius series are the best we can do (discussed in Math 411). The logarithmic solutions (\(\ln r\), \(r^{-n}\)) are often irrelevant for applications since they're unbounded toward \(r \to 0\) or \(r \to \infty\), and physical boundary conditions enforce boundedness. The second logarithmic solution can be obtained from scratch via <em>reduction of order</em>.
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-mean-value">
+  <h2>14. Mean Value Property</h2>
+  <span class="slide-ref">Slides 35–36</span>
+
+  <p>At the origin we obtained:</p>
+  <div class="math-block">
+    \[
+    u(0,\theta) = A_0 = \frac{1}{2\pi}\int_{-\pi}^{\pi} f(\theta)\,d\theta
+    \]
+  </div>
+
+  <div class="annotation green">
+    This is the <strong>average value</strong> of \(f\) on the circle \(r = a\)! Recall: average of \(f(x)\) on \([a,b]\) is \(\frac{1}{b-a}\int_a^b f(x)\,dx\).
+  </div>
+
+  <div class="theorem">
+    <strong>Mean Value Property.</strong>
+    Suppose \(u\) solves Laplace's equation in a region \(R\) in the plane. Then for any point \(P \in R\) and any radius \(r_0\) such that the circle of radius \(r_0\) centered at \(P\) lies within \(R\):
+    <br><br>
+    <strong>The temperature at any point is the average of the temperature along any circle (lying in \(R\)) centered at that point.</strong>
+    \[
+    u(x_0,y_0) = \frac{1}{2\pi r_0^2}\iint_{\text{disk}} u(r,\theta)\,dA
+    \]
+  </div>
+
+  <div class="annotation">
+    This makes sense with physical intuition about steady-state temperature distributions!
+  </div>
+</section>
+
+<!-- ======================================================== -->
+<section id="sec-max-principle">
+  <h2>15. Maximum Principle</h2>
+  <span class="slide-ref">Slides 36–39</span>
+
+  <div class="theorem">
+    <strong>Maximum Principle (no sources).</strong>
+    In steady state, the temperature <strong>cannot attain its maximum (or minimum) in the interior</strong> unless the temperature is constant everywhere.
+  </div>
+
+  <div class="annotation red">
+    Laplace solutions can't have strict local mins or local max's in the interior!
+  </div>
+
+  <h3>Argument via the second derivative test</h3>
+
+  <p>In Math 230, a nondegenerate local maximum (classified via the second derivative test) satisfies:</p>
+  <div class="math-block">
+    \[
+    D := \pdd{u}{x}\cdot\pdd{u}{y} - \left(\frac{\partial^2 u}{\partial x\,\partial y}\right)^2 > 0, \qquad \pdd{u}{x} < 0.
+    \]
+  </div>
+
+  <div class="annotation red">
+    "Hessian determinant" — need both second partials nonzero and <em>same sign</em>!
+  </div>
+
+  <p>But for solutions to Laplace's equation:</p>
+  <div class="math-block">
+    \[
+    \nabla^2 u = \pdd{u}{x} + \pdd{u}{y} = 0 \implies \pdd{u}{x} = -\pdd{u}{y}
+    \]
+  </div>
+  <p>So the two second partial derivatives have <strong>opposite signs</strong> — the conditions for a nondegenerate local max (or min) can never be satisfied.</p>
+
+  <div class="annotation orange">
+    Similarly, a nondegenerate local minimum requires \(D > 0\) and \(\frac{\partial^2 u}{\partial x^2} > 0\), which also fails.
+  </div>
+
+  <h3>What about degenerate critical points?</h3>
+
+  <p>Degenerate critical points (\(D = 0\)) are possible — for example, monkey saddles like \(f(x,y) = x^4 + y^4\) (strict local min at \((0,0)\) but \(D = 0\) — not classifiable by the 2nd derivative test).</p>
+
+  <p>To handle this case: suppose \(u\) has a <strong>strict</strong> local maximum. By the mean value property, the maximum value must equal the average of all points on any surrounding circle. But if the value is <em>strictly</em> greater than all nearby values, it cannot equal their average — contradiction!</p>
+
+  <div class="annotation green">
+    Physical intuition: \(\nabla^2 u = 0\) describes steady-state heat distribution. A "hot point" in the interior would cool down — contradicting steady state!
+  </div>
+
+  <p><strong>Consequences of the maximum principle:</strong> Uniqueness and continuous dependence on data for the Laplace BVP follow from the maximum principle. For the heat equation, these are established using an <em>energy argument</em>.</p>
+
+  <p><strong>Existence</strong> follows from our ability to obtain solution formulas via separation of variables. For higher-dimensional problems with more complicated domains, solution formulas may not be available and existence must be established using specialized techniques.</p>
+
+  <div class="remark">
+    <strong>ODE vs PDE:</strong> In ODEs, there is a very powerful existence and uniqueness theorem (Picard–Lindelöf) that applies in a wide variety of contexts. Unfortunately, no such universal theory exists for PDE — different techniques are needed depending on the equation and context.
+  </div>
+</section>
+
+<footer>
+  Math 412 — Section 2.5 Lecture Notes. Converted to accessible HTML with MathJax rendering. Annotations from in-class discussion are marked with ✏️.
+</footer>
+
+</body>
+</html>
