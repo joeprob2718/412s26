@@ -7292,7 +7292,6 @@ a.anchor-link {
 }
 </style>
 <!-- Load mathjax -->
-
 <script>
 MathJax = {
   tex: {
@@ -7301,6 +7300,7 @@ MathJax = {
 };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+
 <!-- End of mathjax configuration --><script type="module">
   document.addEventListener("DOMContentLoaded", async () => {
     const diagrams = document.querySelectorAll(".jp-Mermaid > pre.mermaid");
@@ -7630,41 +7630,39 @@ and so typical solutions to the PDE and homogeneous BC are</p>
 <p>$$\boxed{ B_n =  \frac{2}{H \cosh\left( \frac{n \pi L}{H}\right)} \int_0^H g(y) \sin \left( \frac{n \pi y}{H} \right)\, dy}.$$</p>
 <h2 id="(d)">(d)<a class="anchor-link" href="#(d)">¶</a></h2><p>Let's use the product ansatz $u_p(x,y) = h(x) \phi(y)$.  Inserting into Laplace's equation, dividing by $h(x)\phi(y)$, and rearranging yields
 $$ h''(x) \phi(y) + h(x) \phi''(y) = 0 \implies \frac{h''(x)}{h(x)} + \frac{\phi''(y)}{\phi(y)} = 0 \implies - \frac{h''(x)}{h(x)} = \frac{\phi''(y)}{\phi(y)} =: - \lambda.$$</p>
-<p>We use the BC $\frac{\partial u}{\partial y}(x,0) = u(x,H) = 0$ to obtain $\phi'(0) = \phi(H) = 0$, and similarly $\frac{\partial u}{\partial x} (L,y) = 0$ leads to $h'(L) = 0.$</p>
+<p>We use the BC $\frac{\partial u}{\partial y}(x,0) = u(x,H) = 0$ to obtain $\phi'(0) = \phi(H) = 0$, and similarly $u (L,y) = 0$ leads to $h(L) = 0.$</p>
 <p>This gives the coupled ODE and homogeneous BC:</p>
-<p>$$\left\{ \begin{array}{rll} \phi''(y) &amp;= - \lambda \phi(y), &amp; \phi'(0) = \phi(H) = 0 \\ h''(x) &amp;= \lambda h(x), &amp; h'(L) = 0 \end{array} \right. .$$</p>
+<p>$$\left\{ \begin{array}{rll} \phi''(y) &amp;= - \lambda \phi(y), &amp; \phi'(0) = \phi(H) = 0 \\ h''(x) &amp;= \lambda h(x), &amp; h(L) = 0 \end{array} \right. .$$</p>
 <p>Remember, we never consider inhomogeneous conditions for our product solutions; we eventually take linear combinations of product solutions to satisfy them.</p>
 <p>I chose $\phi$ for the $y$-dependent function to match up as closely as possible with the reference table.  However, the $\phi$ boundary conditions are as in Exercise 2.4.5 from HW 3, leading to</p>
 <p>$$ \lambda = \left( \frac{(2n-1) \pi}{2H}\right)^2, \quad \phi(y) = A \cos \left( \frac{(2n-1) \pi y}{2H} \right), \quad n = 1, 2, 3,... .$$</p>
 <p>(See the HW 3 solutions for how to deduce these eigenvalues/eigenfunctions from the reference table --- it requires a little thought but doesn't require "starting from scratch".)</p>
 <p>Then, since $\lambda &gt; 0$ we can use
 $$ h''(x) = \underbrace{\lambda}_{&gt; 0} h(x) \implies h(x) = c_1 \cosh( \sqrt{\lambda} (x-L)) + c_2 \sinh( \sqrt{\lambda} (x-L)).$$</p>
-<p>Then,</p>
-<p>$$h'(x) = c_1 \sqrt{\lambda}\sinh[ \sqrt{\lambda} (x-L) ] + c_2 \sqrt{\lambda}\cosh[ \sqrt{\lambda} (x-L)].$$</p>
-<p>Since $\cosh 0 = 1, \sinh 0 = 0,$ the condition $h'(L) = 0$ implies $c_2 = 0$, and so (along with using the $\lambda$ values provided by the eigenvalue problem for the $y$ dependence) we have</p>
-<p>$$h(x) = c \cosh[ \sqrt{\lambda} (x-L)] = c\cosh\left( \frac{ (2n-1) \pi (x-L)}{2H} \right).$$</p>
-<p>(I chose to shift the hyperbolic functions by $L$ for convenience in implementing $h'(L) = 0$.)</p>
+<p>The condition $h(L) = 0$ implies $c_1 = 0$, and so (along with using the $\lambda$ values provided by the eigenvalue problem for the $y$ dependence) we have</p>
+<p>$$h(x) = c \sinh[ \sqrt{\lambda} (x-L)] = c\sinh\left( \frac{ (2n-1) \pi (x-L)}{2H} \right).$$</p>
+<p>(I chose to shift the hyperbolic functions by $L$ for convenience in implementing $h(L) = 0$.)</p>
 <p>Putting it together, any nontrivial product solution must be of the form</p>
-<p>$$ u_p(x,y) = A \cos \left( \frac{(2n-1) \pi y}{2H} \right) \cosh \left( \frac{(2n-1) \pi(x-L)}{2H} \right), \quad n = 1, 2, 3, ... ,$$
+<p>$$ u_p(x,y) = A \cos \left( \frac{(2n-1) \pi y}{2H} \right) \sinh \left( \frac{(2n-1) \pi(x-L)}{2H} \right), \quad n = 1, 2, 3, ... ,$$
 and so typical solutions to the PDE and homogeneous BC are</p>
-<p>$$ \boxed{u(x,y)} = \sum u_p(x,y) = \boxed{\sum_{n=1}^\infty A_n \cos \left( \frac{(2n-1) \pi y}{2H} \right) \cosh \left( \frac{(2n-1) \pi (x-L)}{2H} \right)}.$$</p>
+<p>$$ \boxed{u(x,y)} = \sum u_p(x,y) = \boxed{\sum_{n=1}^\infty A_n \cos \left( \frac{(2n-1) \pi y}{2H} \right) \sinh \left( \frac{(2n-1) \pi (x-L)}{2H} \right)}.$$</p>
 <p>We want $u(0, y) = g(y)$ and so</p>
-<p>$$u(0,y) = g(y) = \sum_{n=1}^\infty A_n  \cos \left( \frac{(2n-1) \pi y}{2H}\right) \cosh \left( \frac{(2n-1) \pi (-L)}{2H} \right).$$</p>
-<p>Since $\cosh(\cdot)$ is even, we can write this as</p>
-<p>$$g(y) =  \sum_{n=1}^\infty \underbrace{\left[ A_n \cosh \left( \frac{(2n-1) \pi L}{2H} \right)\right]} \cos \left( \frac{(2n-1) \pi y}{2H}\right) .$$</p>
+<p>$$u(0,y) = g(y) = \sum_{n=1}^\infty A_n  \cos \left( \frac{(2n-1) \pi y}{2H}\right) \sinh \left( \frac{(2n-1) \pi (-L)}{2H} \right).$$</p>
+<p>Since $\sinh(\cdot)$ is odd, we can write this as</p>
+<p>$$g(y) =  \sum_{n=1}^\infty \underbrace{\left[ -A_n \sinh \left( \frac{(2n-1) \pi L}{2H} \right)\right]} \cos \left( \frac{(2n-1) \pi y}{2H}\right) .$$</p>
 <p>I didn't have you go through the trig identities for part (b), but part (b) of Exercise 2.4.5 asks you to use the product-to-sum trig identities to verify the similar orthogonality integrals: for $n,m &gt;0$ integers we have</p>
 <p>$$ \int_0^H \cos \left( \frac{(2n-1)\pi y}{2H} \right) \cos \left( \frac{(2m-1)\pi y}{2H} \right)\, dy = \left\{ \begin{array}{rl} 0 &amp; n \neq m \\ \\ \dfrac{H}{2} &amp; n = m \end{array} \right. .$$</p>
 <p>(A clever way to do this is to use the fact that these eigenfunctions are odd with respect to $y=H$ (by construction), and so their product is even, making</p>
 <p>$$\int_0^H \cos \left( \frac{(2n-1)\pi y}{2H} \right) \cos \left( \frac{(2m-1)\pi y}{2H} \right)\, dy = \frac 1 2 \int_0^{2H} \cos \left( \frac{(2n-1)\pi y}{2H} \right) \cos \left( \frac{(2m-1)\pi y}{2H} \right)\, dy$$</p>
 <p>and these are a subset integrals we've already calculated --- that is, we verified cosine orthoganility on $[0,L]$ and this is odd-frequency-cosine orthogonality on $[0,2H]$.  This orthogonality, and the fact that this sort of expansion has similar properties as our usual Fourier cosine expansion, is not a surprise since these are all examples of Sturm-Liouville eigenvalue problems, as discussed in Ch. 5 of the textbook (not planning on doing in this class).)</p>
 <p>Then, multiplying by $\cos\left( \frac{(2m-1)\pi y}{2H}\right)$ and integrating $0$ to $H$ yields</p>
-<p>$$\int_0^H g(y)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy = \int_0^H\left[ \sum_{n=1}^\infty  A_n \cosh \left( \frac{(2n-1) \pi L}{2H} \right) \cos \left( \frac{(2n-1) \pi y}{2H}\right)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\right] \, dy  .$$</p>
+<p>$$\int_0^H g(y)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy = \int_0^H\left[ \sum_{n=1}^\infty  (-A_n) \sinh \left( \frac{(2n-1) \pi L}{2H} \right) \cos \left( \frac{(2n-1) \pi y}{2H}\right)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\right] \, dy  .$$</p>
 <p>Interchanging the order of integration and summation yields</p>
-<p>$$\int_0^H g(y)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy = \sum_{n=1}^\infty \left[  A_n \cosh \left( \frac{(2n-1) \pi L}{2H} \right) \int_0^H \cos \left( \frac{(2n-1) \pi y}{2H}\right)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy \right] .$$</p>
+<p>$$\int_0^H g(y)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy = \sum_{n=1}^\infty \left[  -A_n \sinh \left( \frac{(2n-1) \pi L}{2H} \right) \int_0^H \cos \left( \frac{(2n-1) \pi y}{2H}\right)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy \right] .$$</p>
 <p>The orthoganility integrals mean only the $n=m$ term survives, and using its value we have</p>
-<p>$$\int_0^H g(y)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy =  A_m \cosh \left( \frac{(2m-1) \pi L}{2H} \right) \cdot \frac{H}{2} .$$</p>
+<p>$$\int_0^H g(y)\cos\left( \frac{(2m-1)\pi y}{2H}\right)\, dy =  -A_m \sinh \left( \frac{(2m-1) \pi L}{2H} \right) \cdot \frac{H}{2} .$$</p>
 <p>Solving for $A_n$ yields</p>
-<p>$$\boxed{A_n = \dfrac{2}{H \cosh \left( \frac{(2n-1)\pi L}{2H}\right)} \int_0^H g(y) \cos \left(\frac{(2n-1)\pi y}{2H}\right) \, dy}.$$</p>
+<p>$$\boxed{A_n = -\dfrac{2}{H \sinh \left( \frac{(2n-1)\pi L}{2H}\right)} \int_0^H g(y) \cos \left(\frac{(2n-1)\pi y}{2H}\right) \, dy}.$$</p>
 </div>
 </div>
 </div>
