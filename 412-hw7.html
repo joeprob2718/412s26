@@ -7300,7 +7300,6 @@ MathJax = {
 };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
-
 <!-- End of mathjax configuration --><script type="module">
   document.addEventListener("DOMContentLoaded", async () => {
     const diagrams = document.querySelectorAll(".jp-Mermaid > pre.mermaid");
@@ -7572,7 +7571,7 @@ but the condition $h'(0) = 0$ means $c_2=0$.</p>
 <p>$$ \boxed{B_n =} \frac{2}{4} \int_0^4 u(x,0) \sin \frac{n \pi x}{4} \, dx = \boxed{\frac 1 2 \int_1^2 \sin \frac{n\pi x}{4} \, dx}.$$</p>
 <p>This would be fine to leave as an answer on the exam, but we can compute</p>
 <p>$$
-B_n = \frac 1 2 \cdot \frac{4}{n \pi} \cos \frac{n \pi x}{4} \Big|_1^2 = \frac{2}{n \pi} \left[ \cos \frac{n \pi}{2} - \cos \frac{n \pi}{4} \right].$$</p>
+B_n = -\frac 1 2 \cdot \frac{4}{n \pi} \cos \frac{n \pi x}{4} \Big|_1^2 = \frac{2}{n \pi} \left[ \cos \frac{n \pi}{4} - \cos \frac{n \pi}{2} \right].$$</p>
 <p>You could find a pattern depending on whether $n=8k, 8k+1, ..., 8k+7$ for $k$ integer, but I didn't expect you to do this.</p>
 <h1 id="4.4.2">4.4.2<a class="anchor-link" href="#4.4.2">¶</a></h1><p>The product ansatz is
 $$u_p(x,t) = \phi(x) h(t),$$
@@ -7720,7 +7719,7 @@ which is precisely the same collection as the odd modes from part (a):
 $$\phi(x) = \sin\left( \frac{n \pi x}{L} \right), \quad n = 1, 3, 5, ...$$
 An odd mode for (a) will NOT have a node at $H = \frac L 2,$ but will instead have a horizontal tangent at $H = \frac L 2.$  This is equivalent to focusing on $0 \leq x \leq \frac L 2$ and requiring $\phi'\left( \frac L 2 \right) = 0,$ which is what (b) was doing.  The natural (angular) frequencies are $c$ times the "spatial frequencies"/"wavenumbers" $\frac{(2m-1)\pi}{L}$, and so are also the same.</p>
 <p>This is the same trick we used in 2.4.4(a) when we started with the $[0,H]$ eigenvalue problem</p>
-<p>$$ \phi'' = - \lambda \phi, \quad \phi(0) = \phi'(H) = 0,$$</p>
+<p>$$ \phi'' = - \lambda \phi, \qquad \quad \phi(0) = \phi'(H) = 0,$$</p>
 <p>and defined the even extension with respect to $x=H$ to be</p>
 <p>$$\phi_{\text{\small{even}},H}(x) = \left\{ \begin{array}{ll} \phi(x) &amp; 0 \leq x \leq H \\ \phi(2H-x) &amp; H \leq x \leq 2H \end{array} \right. .$$</p>
 <p>The conditions $\phi(x)$ smooth on $[0,H]$, $\phi(0) = 0$, $\phi'(H) = 0$ ensures that $\phi_{\text{\tiny{even}},H}(x)$ is smooth on $[0,2H]$ with $$\phi_{\text{\small{even}},H}(0) = \phi_{\text{\small{even}},H}'(H) = \phi_{\text{\small{even}},H}(H) = 0,$$ and it solves the same ODE.  We then looked for the solutions
