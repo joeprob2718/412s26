@@ -7626,7 +7626,7 @@ showing that characteristics on either side of the shock end at the shock.<br/>
 <h1 id="12.6.19">12.6.19<a class="anchor-link" href="#12.6.19">¶</a></h1><h2 id="(a)">(a)<a class="anchor-link" href="#(a)">¶</a></h2><p>We have $c(\rho) = \rho^2$ is strictly <b>increasing</b> (in contrast to the traffic model), and so $c(\rho_L) = c(4) &gt; c(3) = c(\rho_R)$, causing an immediate collision of characteristics for this "shock data".<br/>
 We need to write the equation in conservative form: we can take any antiderivative $\phi(\rho) = \int c(\rho) \, d\rho = \int \rho^2 \, d\rho$ to obtain
 $$\frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x} \left( \frac{\rho^3}{3} \right) = 0.$$
-(Any integration constant woudn't be noticed by the PDE -- notice the derivative --- or by the jump condition --- since we only consider changes in flux.)</p>
+(Any integration constant wouldn't be noticed by the PDE -- notice the derivative --- or by the jump condition --- since we only consider changes in flux.)</p>
 <p>Then,
 $$[\phi] = \frac{3^3}{3} - \frac{4^3}{3} = -\frac{37}{3}, \qquad [\rho] = 3-4 = -1,$$
 leading to
@@ -7642,13 +7642,13 @@ The solution is then</p>
 <h2 id="(b)">(b)<a class="anchor-link" href="#(b)">¶</a></h2><p>We have $c(\rho) = 4\rho$ is strictly <b>increasing</b> (in contrast to the traffic model), and so $c(\rho_L) = c(3) &gt; c(2) = c(\rho_R)$, causing an immediate collision of characteristics for this "shock data".<br/>
 We need to write the equation in conservative form: we can take any antiderivative $\phi(\rho) = \int c(\rho) \, d\rho = \int \rho^2 \, d\rho$ to obtain
 $$\frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x} \left( 2\rho^2 \right) = 0.$$
-(Any integration constant woudn't be noticed by the PDE -- notice the derivative --- or by the jump condition --- since we only consider changes in flux.)</p>
+(Any integration constant wouldn't be noticed by the PDE -- notice the derivative --- or by the jump condition --- since we only consider changes in flux.)</p>
 <p>Then,
 $$[\phi] = 2(2^2)-3(2^2) = -10, \qquad [\rho] = 2-3 = -1,$$
 leading to
 $$\frac{dx_s}{dt} = \frac{[\phi]}{[\rho]} = 10.$$
-The solution is then</p>
-<p>$$\boxed{\rho(x,t) = \left\{ \begin{array}{ll} 3 &amp; x &lt; 10t \\ \\ 2 &amp; x &gt; 10t\end{array} \right.} .$$</p>
+The solution is then (shock starts at $(x,t) = (1,0)$ with $\dfrac{dx_s}{dt} = 10$)</p>
+<p>$$\boxed{\rho(x,t) = \left\{ \begin{array}{ll} 3 &amp; x &lt; 1+10t \\ \\ 2 &amp; x &gt; 1+ 10t\end{array} \right.} .$$</p>
 <p>Notice</p>
 <p>$$c(\rho_L) = c(3) = 12 &gt; 8 = c(2) = c(\rho_R),$$</p>
 <p>and that</p>
