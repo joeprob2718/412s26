@@ -8206,16 +8206,16 @@ $$</p>
 <p>Then, matching $x^k$ coefficients, for $k \geq 3$:</p>
 <p>$$ (n+2)a_{n+2} - a_n = 0 \implies \fbox{$a_{n+2} = \frac{a_n}{n+2}$}.$$</p>
 <p>Putting it together, the solution, along with the recurrence for ALL the terms is given by (with a quick re-index just so it's clear we're defining $a_0, a_1, a_2, a_3, a_4, a_5, ...$)</p>
-<p>$$ 
-\boxed{\begin{align*}
+<p>
+\begin{align*}
 y(x) &amp;= \sum_{n=0}^\infty a_n x^n,\\
 a_0 &amp;= 2 \\
 a_1 &amp;= 0 \\
 a_2 &amp;= 1 \\
 a_3 &amp;= -\frac 1 3 \\
 a_{n} &amp;= \frac{a_{n-2}}{n}, n \geq 4.
-\end{align*}}
-$$</p>
+\end{align*}
+</p>
 <p>The reason I wanted to do the $x^0, x^1, x^2$ separately:  the starting indices weren't the same so we had to be careful which summations actually contributed to the lowest ordered terms; also the $x^2$ source ONLY was relevant at the $x^2$ level, so that's why I waited until the $x^k, k\geq 3$ coefficient to determine "general recurrence".</p>
 </div>
 </div>
